@@ -97,13 +97,6 @@ NSArray* row3Keys = nil;
     [self.row3key1 addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
 }
 
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    NSLog(@"viewWillAppear:         %@", [self viewSizeInfo]);
-}
-
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
@@ -111,34 +104,6 @@ NSArray* row3Keys = nil;
     NSLog(@"viewDidAppear:          %@", [self viewSizeInfo]);
 
     // add auto layout constraints for view
-    NSLayoutConstraint* leftConstr = [NSLayoutConstraint constraintWithItem:self.view
-                                                                  attribute:NSLayoutAttributeLeft
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:self.view.superview
-                                                                  attribute:NSLayoutAttributeLeft
-                                                                 multiplier:1 constant:0];
-    NSLayoutConstraint* rightConstr = [NSLayoutConstraint constraintWithItem:self.view
-                                                                  attribute:NSLayoutAttributeRight
-                                                                  relatedBy:NSLayoutRelationEqual
-                                                                     toItem:self.view.superview
-                                                                  attribute:NSLayoutAttributeRight
-                                                                 multiplier:1 constant:0];
-    NSLayoutConstraint* topConstr   = [NSLayoutConstraint constraintWithItem:self.view
-                                                                   attribute:NSLayoutAttributeTop
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:self.view.superview
-                                                                   attribute:NSLayoutAttributeTop
-                                                                  multiplier:1 constant:0];
-    NSLayoutConstraint* bottomConstr = [NSLayoutConstraint constraintWithItem:self.view
-                                                                   attribute:NSLayoutAttributeBottom
-                                                                   relatedBy:NSLayoutRelationEqual
-                                                                      toItem:self.view.superview
-                                                                   attribute:NSLayoutAttributeBottom
-                                                                  multiplier:1 constant:0];
-    [self.view.superview addConstraints: @[leftConstr, rightConstr, topConstr, bottomConstr]];
-
-    self.view.translatesAutoresizingMaskIntoConstraints = NO;
-    self.view.autoresizingMask = 0;
     self.heightConstraint = [NSLayoutConstraint constraintWithItem: self.view
                                                          attribute: NSLayoutAttributeHeight
                                                          relatedBy: NSLayoutRelationEqual
@@ -148,14 +113,6 @@ NSArray* row3Keys = nil;
     self.heightConstraint.priority = 999;
     [self.view addConstraint:self.heightConstraint];
     [self adjustKeyboardHeight];
-}
-
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
-{
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-    
-    NSLog(@"viewWillTransitionToSize: %@, toSize: %@", [self viewSizeInfo], NSStringFromCGSize(size));
-    
 }
 
 // viewWillLayoutSubviews gets called twice at the start of an orientation change
