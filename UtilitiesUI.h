@@ -29,4 +29,5 @@
 //-----------------------------------------------------------------------------
 void dumpView(UIView* aView, NSString* indent, BOOL showLayers);
 void dumpLayer(CALayer* aLayer, NSString* indent);
+void dumpConstraints(UIView* aView);
 #endif

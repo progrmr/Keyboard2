@@ -62,4 +62,25 @@ void dumpLayer(CALayer* aLayer, NSString* indent)
     }
 }
 
+// dumpConstraints - prints the auto layout constraints for a view
+void dumpConstraints(UIView* aView)
+{
+    if (![aView isKindOfClass:[UIView class]]) {
+        NSLog(@"expected UIView but %08x is %@", (uint32_t)aView, NSStringFromClass([aView class]));
+        return;
+    }
+    
+    const BOOL ambiguous = [aView hasAmbiguousLayout];
+    
+    NSLog(@"\n\n%@\n%@\nHORIZONTAL: %@\nVERTICAL: %@",
+          aView,
+          ambiguous ? @"<<<<<< AMBIGUOUS LAYOUT" : @"",
+          [aView constraintsAffectingLayoutForAxis:UILayoutConstraintAxisHorizontal],
+          [aView constraintsAffectingLayoutForAxis:UILayoutConstraintAxisVertical]);
+    
+    if (ambiguous) {
+        [aView exerciseAmbiguityInLayout];
+    }
+}
+
 #endif
