@@ -15,6 +15,8 @@
 
 @interface KeyboardViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
 
+@property (nonatomic, strong) NSLayoutConstraint* heightConstraint;
+
 @property (nonatomic, strong) UIColor*  textColor;
 
 @property (nonatomic, strong) UIButton* nextKeyboardButton;
@@ -26,9 +28,11 @@
 @end
 
 
-enum { kKeyHeight = 50, kKeyWidth = 40 };
-
-enum { kNumberOfRows = 3 };
+enum {
+    kKeyboardHeightPortrait  = 132,
+    kKeyboardHeightLandscape = 105,
+    kNumberOfRows = 3,
+};
 
 const CGFloat keyHeightFactor = 1.0f / kNumberOfRows;
 
@@ -38,16 +42,45 @@ NSArray* row3Keys = nil;
 
 @implementation KeyboardViewController
 
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        NSLog(@"%s", __PRETTY_FUNCTION__);
+    }
+    return self;
+}
+
 - (void)updateViewConstraints {
     [super updateViewConstraints];
     
     // Add custom view sizing constraints here
+    //NSLog(@"updateViewConstraints:  %@", [self viewSizeInfo]);
+}
+
+- (void)adjustKeyboardHeight
+{
+    // update keyboard height constraint for orientation change
+    const CGSize screenSize = [UIScreen mainScreen].bounds.size;
+    const BOOL isLandscape = screenSize.width > screenSize.height;
+    const long preferredHeight = isLandscape ? kKeyboardHeightLandscape : kKeyboardHeightPortrait;
+    const BOOL heightChanged = lroundf(self.view.bounds.size.height) != preferredHeight;
+    
+    if (heightChanged) {
+        NSLog(@"orientation: %@", isLandscape ? @"LANDSCAPE" : @"PORTRAIT");
+        NSLog(@"height: %ld", preferredHeight);
+        self.heightConstraint.constant = preferredHeight;
+        [self.view setNeedsUpdateConstraints];
+    }
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    NSLog(@"viewDidLoad:            %@", [self viewSizeInfo]);
+
     row1Keys = @[ @"W", @"E", @"R", @"T", @"Y", @"U", @"I", @"O", @"P" ];
     row2Keys = @[ @"A", @"S", @"D", @"F", @"G", @"H", @"J", @"K", @"L" ];
     row3Keys = @[ @"🌍", @"Z", @"X", @"C", @"V", @"B", @"N", @"M", @"."];
@@ -62,6 +95,82 @@ NSArray* row3Keys = nil;
     // REQUIRED: next keyboard button, we use the first key in row3
     [self.row3key1 removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
     [self.row3key1 addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    NSLog(@"viewWillAppear:         %@", [self viewSizeInfo]);
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    NSLog(@"viewDidAppear:          %@", [self viewSizeInfo]);
+
+    // add auto layout constraints for view
+    NSLayoutConstraint* leftConstr = [NSLayoutConstraint constraintWithItem:self.view
+                                                                  attribute:NSLayoutAttributeLeft
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:self.view.superview
+                                                                  attribute:NSLayoutAttributeLeft
+                                                                 multiplier:1 constant:0];
+    NSLayoutConstraint* rightConstr = [NSLayoutConstraint constraintWithItem:self.view
+                                                                  attribute:NSLayoutAttributeRight
+                                                                  relatedBy:NSLayoutRelationEqual
+                                                                     toItem:self.view.superview
+                                                                  attribute:NSLayoutAttributeRight
+                                                                 multiplier:1 constant:0];
+    NSLayoutConstraint* topConstr   = [NSLayoutConstraint constraintWithItem:self.view
+                                                                   attribute:NSLayoutAttributeTop
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self.view.superview
+                                                                   attribute:NSLayoutAttributeTop
+                                                                  multiplier:1 constant:0];
+    NSLayoutConstraint* bottomConstr = [NSLayoutConstraint constraintWithItem:self.view
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                   relatedBy:NSLayoutRelationEqual
+                                                                      toItem:self.view.superview
+                                                                   attribute:NSLayoutAttributeBottom
+                                                                  multiplier:1 constant:0];
+    [self.view.superview addConstraints: @[leftConstr, rightConstr, topConstr, bottomConstr]];
+
+    self.view.translatesAutoresizingMaskIntoConstraints = NO;
+    self.view.autoresizingMask = 0;
+    self.heightConstraint = [NSLayoutConstraint constraintWithItem: self.view
+                                                         attribute: NSLayoutAttributeHeight
+                                                         relatedBy: NSLayoutRelationEqual
+                                                            toItem: nil
+                                                         attribute: NSLayoutAttributeNotAnAttribute
+                                                        multiplier: 0 constant: 0];
+    self.heightConstraint.priority = 999;
+    [self.view addConstraint:self.heightConstraint];
+    [self adjustKeyboardHeight];
+}
+
+- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
+{
+    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
+    
+    NSLog(@"viewWillTransitionToSize: %@, toSize: %@", [self viewSizeInfo], NSStringFromCGSize(size));
+    
+}
+
+// viewWillLayoutSubviews gets called twice at the start of an orientation change
+- (void)viewWillLayoutSubviews
+{
+    [super viewWillLayoutSubviews];
+    
+    NSLog(@"viewWillLayoutSubviews: %@", [self viewSizeInfo]);
+    
+    [self adjustKeyboardHeight];
+}
+
+- (NSString*)viewSizeInfo
+{
+    return [NSString stringWithFormat:@"frame: %@, window: %@, screen: %@", NSStringFromCGSize(self.view.bounds.size), NSStringFromCGSize(self.view.window.bounds.size), NSStringFromCGSize([UIScreen mainScreen].bounds.size)];
 }
 
 - (void)textWillChange:(id<UITextInput>)textInput {
@@ -84,10 +193,10 @@ NSArray* row3Keys = nil;
 {
     NSString* title = [sender titleForState:UIControlStateNormal];
     
-    NSLog(@"key pressed: %@", title);
+    [self.textDocumentProxy insertText:title];
     
     if ([title isEqualToString:@"X"]) {
-        dumpView(self.view, @"", YES);
+        dumpView(self.view.window, @"", NO);
         
 #if USE_CAMERA
     } else if ([title isEqualToString:@"C"]) {

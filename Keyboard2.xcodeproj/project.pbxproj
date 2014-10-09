@@ -18,11 +18,6 @@
 		8E74959C19DA65EE00B9EC9B /* Garino-Keyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8E7495D319DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
 		8E7495D419DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
-		8E887C8419DC440A00102F0E /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E887C8319DC440A00102F0E /* CoreVideo.framework */; };
-		8E887C8619DC441300102F0E /* CoreMedia.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E887C8519DC441300102F0E /* CoreMedia.framework */; };
-		8E887C8819DC441A00102F0E /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E887C8719DC441A00102F0E /* AVFoundation.framework */; };
-		8E887C8A19DC442100102F0E /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E887C8919DC442100102F0E /* ImageIO.framework */; };
-		8E887C8C19DC443000102F0E /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E887C8B19DC443000102F0E /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +84,8 @@
 		8E887C8719DC441A00102F0E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		8E887C8919DC442100102F0E /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
 		8E887C8B19DC443000102F0E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
+		8E973A9D19E6AFD1006C4694 /* SampleInputVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SampleInputVC.h; sourceTree = "<group>"; };
+		8E973A9E19E6AFD1006C4694 /* SampleInputVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleInputVC.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,11 +107,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E887C8C19DC443000102F0E /* QuartzCore.framework in Frameworks */,
-				8E887C8A19DC442100102F0E /* ImageIO.framework in Frameworks */,
-				8E887C8819DC441A00102F0E /* AVFoundation.framework in Frameworks */,
-				8E887C8619DC441300102F0E /* CoreMedia.framework in Frameworks */,
-				8E887C8419DC440A00102F0E /* CoreVideo.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +116,8 @@
 		8E74955D19DA65AD00B9EC9B = {
 			isa = PBXGroup;
 			children = (
+				8E973A9D19E6AFD1006C4694 /* SampleInputVC.h */,
+				8E973A9E19E6AFD1006C4694 /* SampleInputVC.m */,
 				8E887C8B19DC443000102F0E /* QuartzCore.framework */,
 				8E887C8919DC442100102F0E /* ImageIO.framework */,
 				8E887C8719DC441A00102F0E /* AVFoundation.framework */,
