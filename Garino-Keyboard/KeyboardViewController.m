@@ -10,6 +10,7 @@
 #import "NSLayoutConstraint+Additions.h"
 #import "UtilitiesUI.h"
 #import <AVFoundation/AVFoundation.h>
+#import "Key.h"
 
 #define USE_CAMERA 0
 
@@ -19,11 +20,16 @@
 
 @property (nonatomic, strong) UIColor*  textColor;
 
-@property (nonatomic, strong) UIButton* nextKeyboardButton;
+@property (nonatomic, strong) UIView* nextKeyboardButton;
 
-@property (nonatomic, strong) UIButton* row1key1;
-@property (nonatomic, strong) UIButton* row2key1;
-@property (nonatomic, strong) UIButton* row3key1;
+@property (nonatomic, strong) UIView* row1key1;
+@property (nonatomic, strong) UIView* row2key1;
+@property (nonatomic, strong) UIView* row3key1;
+
+@property (nonatomic, strong) UISwipeGestureRecognizer* backspaceGR;
+@property (nonatomic, strong) UISwipeGestureRecognizer* spaceGR;
+@property (nonatomic, strong) UISwipeGestureRecognizer* returnGR;
+@property (nonatomic, strong) UISwipeGestureRecognizer* shiftGR;
 
 @end
 
@@ -93,8 +99,25 @@ NSArray* row3Keys = nil;
     self.row3key1 = [self addRowOfKeys:row3Keys belowView:self.row2key1 belowViewAttr:NSLayoutAttributeBottom];
     
     // REQUIRED: next keyboard button, we use the first key in row3
-    [self.row3key1 removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    [self.row3key1 addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
+//    [self.row3key1 removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+//    [self.row3key1 addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
+    
+    self.backspaceGR = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(backspaceGesture:)];
+    self.backspaceGR.direction = UISwipeGestureRecognizerDirectionLeft;
+    
+    self.spaceGR     = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(spaceGesture:)];
+    self.spaceGR.direction = UISwipeGestureRecognizerDirectionRight;
+    
+    self.returnGR    = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(returnGesture:)];
+    self.returnGR.direction = UISwipeGestureRecognizerDirectionDown;
+    
+    self.shiftGR     = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(shiftGesture:)];
+    self.shiftGR.direction = UISwipeGestureRecognizerDirectionUp;
+    
+    [self.view addGestureRecognizer:self.backspaceGR];
+    [self.view addGestureRecognizer:self.spaceGR];
+    [self.view addGestureRecognizer:self.returnGR];
+    [self.view addGestureRecognizer:self.shiftGR];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -143,7 +166,7 @@ NSArray* row3Keys = nil;
     } else {
         textColor = [UIColor blackColor];
     }
-    [self.nextKeyboardButton setTitleColor:textColor forState:UIControlStateNormal];
+//    [self.nextKeyboardButton setTitleColor:textColor forState:UIControlStateNormal];
 }
 
 - (void)keyPressed:(UIButton*)sender
@@ -162,19 +185,39 @@ NSArray* row3Keys = nil;
     }
 }
 
-- (UIButton*)addRowOfKeys:(NSArray*)keyTitles
-                belowView:(UIView*)belowView
-            belowViewAttr:(NSLayoutAttribute)belowViewAttr
+- (void)backspaceGesture:(UISwipeGestureRecognizer*)gr
+{
+    [self.textDocumentProxy deleteBackward];
+}
+
+- (void)spaceGesture:(UISwipeGestureRecognizer*)gr
+{
+    [self.textDocumentProxy insertText:@" "];
+}
+
+- (void)returnGesture:(UISwipeGestureRecognizer*)gr
+{
+    //[self.textDocumentProxy insertText:@"\n"];
+}
+
+- (void)shiftGesture:(UISwipeGestureRecognizer*)gr
+{
+    
+}
+
+- (UIView*)addRowOfKeys:(NSArray*)keyTitles
+              belowView:(UIView*)belowView
+          belowViewAttr:(NSLayoutAttribute)belowViewAttr
 {
     const CGFloat keyWidthFactor  = 1.0f / keyTitles.count;
     
     UIView* leftView = self.view;
     NSLayoutAttribute leftAttr = NSLayoutAttributeLeft;
-    UIButton* firstKey = nil;
+    UIView* firstKey = nil;
     
     for (NSString* keyTitle in keyTitles) {
-        UIButton* key = [self keyboardButton:keyTitle target:self action:@selector(keyPressed:)];
-        
+        Key* key = [[Key alloc] initWithTitle:keyTitle];
+
         if (firstKey == nil) {
             firstKey = key;
         }
@@ -192,27 +235,6 @@ NSArray* row3Keys = nil;
     }
     
     return firstKey;
-}
-
-- (UIButton*)keyboardButton:(NSString*)keyTitle
-                     target:(id)target
-                     action:(SEL)action
-{
-    UIButton* button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.translatesAutoresizingMaskIntoConstraints = NO;
-    button.backgroundColor = [UIColor whiteColor];
-    button.titleLabel.font = [UIFont systemFontOfSize:24];
-    button.titleLabel.adjustsFontSizeToFitWidth = YES;
-    button.titleLabel.minimumScaleFactor = 0.5f;
-    [button setTitle:keyTitle forState:UIControlStateNormal];
-    [button setTitleColor:self.textColor forState:UIControlStateNormal];
-    [button addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
-    
-    // add a border outline
-    button.layer.borderColor = self.textColor.CGColor;
-    button.layer.borderWidth = 0.5f;
-
-    return button;
 }
 
 #if USE_CAMERA

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E3C374319E9CF56009DD1A6 /* Key.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C374219E9CF56009DD1A6 /* Key.m */; };
 		8E74956C19DA65AD00B9EC9B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74956B19DA65AD00B9EC9B /* main.m */; };
 		8E74956F19DA65AD00B9EC9B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74956E19DA65AD00B9EC9B /* AppDelegate.m */; };
 		8E74957219DA65AD00B9EC9B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74957119DA65AD00B9EC9B /* ViewController.m */; };
@@ -59,6 +60,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8E3C374119E9CF56009DD1A6 /* Key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Key.h; sourceTree = "<group>"; };
+		8E3C374219E9CF56009DD1A6 /* Key.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Key.m; sourceTree = "<group>"; };
 		8E74956619DA65AD00B9EC9B /* Keyboard2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keyboard2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E74956A19DA65AD00B9EC9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E74956B19DA65AD00B9EC9B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -189,6 +192,8 @@
 			children = (
 				8E74959719DA65EE00B9EC9B /* KeyboardViewController.h */,
 				8E74959819DA65EE00B9EC9B /* KeyboardViewController.m */,
+				8E3C374119E9CF56009DD1A6 /* Key.h */,
+				8E3C374219E9CF56009DD1A6 /* Key.m */,
 				8E74959519DA65EE00B9EC9B /* Supporting Files */,
 			);
 			path = "Garino-Keyboard";
@@ -354,6 +359,7 @@
 			files = (
 				8E7495D419DA72DC00B9EC9B /* UtilitiesUI.m in Sources */,
 				8E74959919DA65EE00B9EC9B /* KeyboardViewController.m in Sources */,
+				8E3C374319E9CF56009DD1A6 /* Key.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
