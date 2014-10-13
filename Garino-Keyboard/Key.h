@@ -8,8 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface Key : UILabel
+typedef enum { Unshifted = 0, Shifted } ShiftState;
+
+@interface Key : UIButton
 
 - (id)initWithTitle:(NSString*)title;
+
+@property (nonatomic, assign) BOOL          isTouched;
+@property (nonatomic, assign) ShiftState    shiftState;
 
 @end

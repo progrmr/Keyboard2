@@ -10,52 +10,54 @@
 #import "NSLayoutConstraint+Additions.h"
 #import "UtilitiesUI.h"
 #import <AVFoundation/AVFoundation.h>
+#import "KeyboardConstants.h"
+#import "KeyboardView.h"
 #import "Key.h"
 
-#define USE_CAMERA 0
-
 @interface KeyboardViewController () <UIImagePickerControllerDelegate, UINavigationControllerDelegate>
+{
+    NSMutableArray* _keyHeightConstraints;
+}
+
+@property (nonatomic, strong) KeyboardView* keyboardView;
 
 @property (nonatomic, strong) NSLayoutConstraint* heightConstraint;
 
-@property (nonatomic, strong) UIColor*  textColor;
-
 @property (nonatomic, strong) UIView* nextKeyboardButton;
 
-@property (nonatomic, strong) UIView* row1key1;
-@property (nonatomic, strong) UIView* row2key1;
-@property (nonatomic, strong) UIView* row3key1;
+@property (nonatomic, strong) NSMutableArray* keyRows;
 
 @property (nonatomic, strong) UISwipeGestureRecognizer* backspaceGR;
 @property (nonatomic, strong) UISwipeGestureRecognizer* spaceGR;
 @property (nonatomic, strong) UISwipeGestureRecognizer* returnGR;
 @property (nonatomic, strong) UISwipeGestureRecognizer* shiftGR;
 
+@property (nonatomic, assign) ShiftState shiftState;
+
 @end
 
 
-enum {
-    kKeyboardHeightPortrait  = 132,
-    kKeyboardHeightLandscape = 105,
-    kNumberOfRows = 3,
-};
-
-const CGFloat keyHeightFactor = 1.0f / kNumberOfRows;
-
-NSArray* row1Keys = nil;
-NSArray* row2Keys = nil;
-NSArray* row3Keys = nil;
-
 @implementation KeyboardViewController
 
+const ShiftState nextShiftState[] = { Shifted, Unshifted };
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         NSLog(@"%s", __PRETTY_FUNCTION__);
+        
+        _keyboardView = [[KeyboardView alloc] init];
+        _keyboardView.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+        
+        _shiftState = Unshifted;
     }
     return self;
+}
+
++ (void)initialize
+{
+    [KeyboardConstants initialize];
 }
 
 - (void)updateViewConstraints {
@@ -65,7 +67,7 @@ NSArray* row3Keys = nil;
     //NSLog(@"updateViewConstraints:  %@", [self viewSizeInfo]);
 }
 
-- (void)adjustKeyboardHeight
+- (void)adjustKeyboardViewHeight
 {
     // update keyboard height constraint for orientation change
     const CGSize screenSize = [UIScreen mainScreen].bounds.size;
@@ -77,6 +79,11 @@ NSArray* row3Keys = nil;
         NSLog(@"orientation: %@", isLandscape ? @"LANDSCAPE" : @"PORTRAIT");
         NSLog(@"height: %ld", preferredHeight);
         self.heightConstraint.constant = preferredHeight;
+        
+        for (NSLayoutConstraint* keyHeightConstraint in _keyHeightConstraints) {
+            keyHeightConstraint.constant = isLandscape ? kKeyHeightLandscape : kKeyHeightPortrait;
+        }
+        
         [self.view setNeedsUpdateConstraints];
     }
 }
@@ -85,18 +92,31 @@ NSArray* row3Keys = nil;
 {
     [super viewDidLoad];
     
+    [self.view addSubview:self.keyboardView];
+    
     NSLog(@"viewDidLoad:            %@", [self viewSizeInfo]);
 
-    row1Keys = @[ @"W", @"E", @"R", @"T", @"Y", @"U", @"I", @"O", @"P" ];
-    row2Keys = @[ @"A", @"S", @"D", @"F", @"G", @"H", @"J", @"K", @"L" ];
-    row3Keys = @[ @"🌍", @"Z", @"X", @"C", @"V", @"B", @"N", @"M", @"."];
-    
     // Perform custom UI setup here
-    self.textColor = [UIColor blackColor];
+    self.keyboardView.backgroundColor = kKeyboardBackgroundColor;
     
-    self.row1key1 = [self addRowOfKeys:row1Keys belowView:self.view     belowViewAttr:NSLayoutAttributeTop];
-    self.row2key1 = [self addRowOfKeys:row2Keys belowView:self.row1key1 belowViewAttr:NSLayoutAttributeBottom];
-    self.row3key1 = [self addRowOfKeys:row3Keys belowView:self.row2key1 belowViewAttr:NSLayoutAttributeBottom];
+    _keyHeightConstraints = [NSMutableArray arrayWithCapacity:kNumberOfKeysPerRow * kNumberOfRows];
+    
+    self.keyRows = [NSMutableArray arrayWithCapacity:kNumberOfRows];
+    
+    [self.keyRows addObject:[self addRowOfKeys:@[ @"q", @"w", @"e", @"r", @"t", @"y", @"u", @"i", @"o", @"p" ]
+                                      rowIndex:0
+                                     belowView:self.keyboardView
+                                 belowViewAttr:NSLayoutAttributeTop]];
+    
+    [self.keyRows addObject:[self addRowOfKeys:@[ @"a", @"s", @"d", @"f", @"g", @"h", @"j", @"k", @"l" ]
+                                      rowIndex:1
+                                     belowView:self.keyRows[0][0]
+                                 belowViewAttr:NSLayoutAttributeBottom]];
+                      
+    [self.keyRows addObject:[self addRowOfKeys:@[ @"🌍", @"z", @"x", @"c", @"v", @"b", @"n", @"m", @".", @"?"]
+                                      rowIndex:2
+                                     belowView:self.keyRows[1][0]
+                                 belowViewAttr:NSLayoutAttributeBottom]];
     
     // REQUIRED: next keyboard button, we use the first key in row3
 //    [self.row3key1 removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
@@ -135,7 +155,7 @@ NSArray* row3Keys = nil;
                                                         multiplier: 0 constant: 0];
     self.heightConstraint.priority = 999;
     [self.view addConstraint:self.heightConstraint];
-    [self adjustKeyboardHeight];
+    [self adjustKeyboardViewHeight];
 }
 
 // viewWillLayoutSubviews gets called twice at the start of an orientation change
@@ -145,7 +165,7 @@ NSArray* row3Keys = nil;
     
     NSLog(@"viewWillLayoutSubviews: %@", [self viewSizeInfo]);
     
-    [self adjustKeyboardHeight];
+    [self adjustKeyboardViewHeight];
 }
 
 - (NSString*)viewSizeInfo
@@ -160,13 +180,12 @@ NSArray* row3Keys = nil;
 - (void)textDidChange:(id<UITextInput>)textInput {
     // The app has just changed the document's contents, the document context has been updated.
     
-    UIColor *textColor = nil;
-    if (self.textDocumentProxy.keyboardAppearance == UIKeyboardAppearanceDark) {
-        textColor = [UIColor whiteColor];
-    } else {
-        textColor = [UIColor blackColor];
-    }
-//    [self.nextKeyboardButton setTitleColor:textColor forState:UIControlStateNormal];
+//    UIColor *textColor = nil;
+//    if (self.textDocumentProxy.keyboardAppearance == UIKeyboardAppearanceDark) {
+//        textColor = [UIColor whiteColor];
+//    } else {
+//        textColor = [UIColor blackColor];
+//    }
 }
 
 - (void)keyPressed:(UIButton*)sender
@@ -177,11 +196,6 @@ NSArray* row3Keys = nil;
     
     if ([title isEqualToString:@"X"]) {
         dumpView(self.view.window, @"", NO);
-        
-#if USE_CAMERA
-    } else if ([title isEqualToString:@"C"]) {
-        [self startCameraPreview];
-#endif
     }
 }
 
@@ -202,109 +216,64 @@ NSArray* row3Keys = nil;
 
 - (void)shiftGesture:(UISwipeGestureRecognizer*)gr
 {
+    self.shiftState = nextShiftState[self.shiftState];
     
+    for (NSArray* rowOfKeys in self.keyRows) {
+        for (Key* key in rowOfKeys) {
+            key.shiftState = self.shiftState;
+        }
+    }
 }
 
-- (UIView*)addRowOfKeys:(NSArray*)keyTitles
-              belowView:(UIView*)belowView
-          belowViewAttr:(NSLayoutAttribute)belowViewAttr
+// returns an array of Key objects
+- (NSArray*)addRowOfKeys:(NSArray*)keyTitles
+                rowIndex:(NSInteger)rowIndex
+               belowView:(UIView*)belowView
+           belowViewAttr:(NSLayoutAttribute)belowViewAttr
 {
-    const CGFloat keyWidthFactor  = 1.0f / keyTitles.count;
+    const NSInteger NumberOfKeys = keyTitles.count;
+    const BOOL oddRow = (NumberOfKeys % 2) == 1;
+    const BOOL firstRow = (rowIndex == 0);
+    NSMutableArray* keys = [NSMutableArray arrayWithCapacity:NumberOfKeys];
     
-    UIView* leftView = self.view;
-    NSLayoutAttribute leftAttr = NSLayoutAttributeLeft;
-    UIView* firstKey = nil;
-    
-    for (NSString* keyTitle in keyTitles) {
+    for (NSInteger keyIndex=0; keyIndex<NumberOfKeys; keyIndex++) {
+        NSString* keyTitle = keyTitles[keyIndex];
+        
         Key* key = [[Key alloc] initWithTitle:keyTitle];
-
-        if (firstKey == nil) {
-            firstKey = key;
-        }
+        [keys addObject:key];
         
-        [self.view addSubview:key];
+        [self.keyboardView addSubview:key];
         
-        [self.view addConstraints:@[ NSLC(key, self.view, NSLayoutAttributeWidth,  keyWidthFactor,  0),
-                                     NSLC(key, self.view, NSLayoutAttributeHeight, keyHeightFactor, 0) ]];
+        // width of key
+        [self.keyboardView addConstraint: NSLC(key, self.keyboardView, NSLayoutAttributeWidth,  kKeyWidthFactor, 0)];
         
-        [self.view addConstraints:@[ NSLC2(key, NSLayoutAttributeLeft, leftView,  leftAttr,      1, 0),
-                                     NSLC2(key, NSLayoutAttributeTop,  belowView, belowViewAttr, 1, 0) ]];
+        // height of key
+        NSLayoutConstraint* keyHeight = NSLC2(key, NSLayoutAttributeHeight, nil, NSLayoutAttributeNotAnAttribute, 0, kKeyHeightPortrait);
+        [_keyHeightConstraints addObject:keyHeight];
+        [self.keyboardView addConstraint: keyHeight];
         
-        leftView = key;
-        leftAttr = NSLayoutAttributeRight;
-    }
-    
-    return firstKey;
-}
-
-#if USE_CAMERA
-static AVCaptureSession* session = nil;
-
-- (AVCaptureDevice*)backCameraDevice
-{
-    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
-    for (AVCaptureDevice *device in devices) {
-        if ([device position] == AVCaptureDevicePositionBack) {
-            return device;
+        // top edge of key
+        [self.keyboardView addConstraint: NSLC2(key, NSLayoutAttributeTop,  belowView, belowViewAttr, 1, firstRow ? 0 : kKeySpacerY)];
+        
+        if (keyIndex > 0) {
+            // left edge of key at right edge of previous key
+            [self.keyboardView addConstraint: NSLC2(key, NSLayoutAttributeLeft, keys[keyIndex-1],  NSLayoutAttributeRight, 1, 0) ];
         }
     }
-    return nil;
-}
-
-- (void)startCameraPreview
-{
-    if (session) {
-        NSLog(@"ERROR: AV camera session already running");
-        return;
+    
+    if (oddRow) {
+        // the number of keys in this row is odd, then center X the middle key
+        [self.keyboardView addConstraint: NSLC(keys[NumberOfKeys/2], self.keyboardView, NSLayoutAttributeCenterX, 1, 0)];
+        
+    } else {
+        // the number of keys in this row is even then first key should be at left edge
+        [self.keyboardView addConstraint: NSLC(keys[0], self.keyboardView, NSLayoutAttributeLeft, 1, 0)];
+        
+        // last key should be at right edge
+        [self.keyboardView addConstraint: NSLC(keys[NumberOfKeys-1], self.keyboardView, NSLayoutAttributeRight, 1, 0)];
     }
     
-    // based on: http://weblog.invasivecode.com/post/18445861158/a-very-cool-custom-video-camera-with
-    //
-    NSError* error = nil;
-    AVCaptureDevice* backCameraDevice = [self backCameraDevice];
-    AVCaptureDeviceInput* backCameraInput = [AVCaptureDeviceInput deviceInputWithDevice:backCameraDevice error:&error];
-    
-    if (!backCameraInput) {
-        NSLog(@"ERROR: %@", error);
-        return;
-    }
-    
-    // create the AV session
-    session = [[AVCaptureSession alloc] init];
-    session.sessionPreset = AVCaptureSessionPresetLow;
-    
-    if (![session canAddInput:backCameraInput]) {
-        NSLog(@"ERROR: session cannot add back camera as input device");
-        return;
-    }
-    
-    // add camera to the session
-    [session addInput:backCameraInput];
-    
-    // create a preview layer over the keyboard
-    CALayer* rootLayer = self.view.layer;
-    rootLayer.masksToBounds = YES;
-    
-    AVCaptureVideoPreviewLayer* captureVideoPreviewLayer = [AVCaptureVideoPreviewLayer layerWithSession:session];
-    captureVideoPreviewLayer.frame = rootLayer.bounds;
-    captureVideoPreviewLayer.videoGravity = AVLayerVideoGravityResizeAspectFill;
-    [rootLayer addSublayer:captureVideoPreviewLayer];
-    
-    // monitor for AV session runtime errors
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(sessionRuntimeErrorNotification:)
-                                                 name:AVCaptureSessionRuntimeErrorNotification
-                                               object:nil];
-
-    // start the AV session
-    [session startRunning];
+    return keys;
 }
-
-- (void)sessionRuntimeErrorNotification:(NSNotification*)notif
-{
-    id info = notif.userInfo;
-    NSLog(@"%@", info);
-}
-#endif
 
 @end

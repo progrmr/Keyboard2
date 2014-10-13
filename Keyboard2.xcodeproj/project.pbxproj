@@ -19,6 +19,8 @@
 		8E74959C19DA65EE00B9EC9B /* Garino-Keyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8E7495D319DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
 		8E7495D419DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
+		8EDDBEE219EC247600AD2D49 /* KeyboardConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */; };
+		8EDDBEE519EC30B300AD2D49 /* KeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +91,10 @@
 		8E887C8B19DC443000102F0E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		8E973A9D19E6AFD1006C4694 /* SampleInputVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SampleInputVC.h; sourceTree = "<group>"; };
 		8E973A9E19E6AFD1006C4694 /* SampleInputVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleInputVC.m; sourceTree = "<group>"; };
+		8EDDBEE019EC247600AD2D49 /* KeyboardConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardConstants.h; sourceTree = "<group>"; };
+		8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardConstants.m; sourceTree = "<group>"; };
+		8EDDBEE319EC30B300AD2D49 /* KeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardView.h; sourceTree = "<group>"; };
+		8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -190,8 +196,12 @@
 		8E74959419DA65EE00B9EC9B /* Garino-Keyboard */ = {
 			isa = PBXGroup;
 			children = (
+				8EDDBEE019EC247600AD2D49 /* KeyboardConstants.h */,
+				8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */,
 				8E74959719DA65EE00B9EC9B /* KeyboardViewController.h */,
 				8E74959819DA65EE00B9EC9B /* KeyboardViewController.m */,
+				8EDDBEE319EC30B300AD2D49 /* KeyboardView.h */,
+				8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */,
 				8E3C374119E9CF56009DD1A6 /* Key.h */,
 				8E3C374219E9CF56009DD1A6 /* Key.m */,
 				8E74959519DA65EE00B9EC9B /* Supporting Files */,
@@ -357,7 +367,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EDDBEE219EC247600AD2D49 /* KeyboardConstants.m in Sources */,
 				8E7495D419DA72DC00B9EC9B /* UtilitiesUI.m in Sources */,
+				8EDDBEE519EC30B300AD2D49 /* KeyboardView.m in Sources */,
 				8E74959919DA65EE00B9EC9B /* KeyboardViewController.m in Sources */,
 				8E3C374319E9CF56009DD1A6 /* Key.m in Sources */,
 			);
