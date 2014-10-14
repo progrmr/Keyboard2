@@ -14,6 +14,8 @@ typedef enum { Unshifted = 0, Shifted } ShiftState;
 
 - (id)initWithTitle:(NSString*)title;
 
++ (instancetype)key:(NSString*)title;
+
 @property (nonatomic, assign) BOOL          isTouched;
 @property (nonatomic, assign) ShiftState    shiftState;
 

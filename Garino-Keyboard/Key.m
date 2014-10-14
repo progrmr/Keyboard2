@@ -55,6 +55,11 @@
     return self;
 }
 
++ (instancetype)key:(NSString *)title
+{
+    return [[Key alloc] initWithTitle:title];
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];

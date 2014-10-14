@@ -95,26 +95,21 @@
     [super setBounds:bounds];
 }
 
-- (void)appendRowOfKeys:(NSArray *)keyTitles
+- (void)appendRowOfKeys:(NSArray *)keys
 {
     const NSUInteger rowIndex = self.keyRows.count;
-    const NSUInteger nKeys = keyTitles.count;
+    const NSUInteger nKeys = keys.count;
     const BOOL firstRow = (rowIndex == 0);
     const NSLayoutAttribute belowAttr = firstRow ? NSLayoutAttributeTop : NSLayoutAttributeBottom;
     UIView* belowView = firstRow ? self : self.keyRows[rowIndex-1][0];
     
-    NSMutableArray* keys = [NSMutableArray arrayWithCapacity:nKeys];
-
     for (NSUInteger keyIndex=0; keyIndex<nKeys; keyIndex++) {
-        NSString* keyTitle = keyTitles[keyIndex];
-        
-        Key* key = [[Key alloc] initWithTitle:keyTitle];
-        [keys addObject:key];
+        Key* key = keys[keyIndex];
         
         [self addSubview:key];
         
         // width of key
-        [self addConstraint: NSLC(key, self, NSLayoutAttributeWidth,  kKeyWidthFactor, 0)];
+        [self addConstraint: NSLC(key, self, NSLayoutAttributeWidth,  1.0f / kNumberOfKeysPerRow, 0)];
         
         // height of key
         NSLayoutConstraint* keyHeight = NSLC2(key, NSLayoutAttributeHeight, nil, NSLayoutAttributeNotAnAttribute, 0, self.keyHeight);
@@ -142,7 +137,7 @@
         // the number of keys in this row is even then first key should be at left edge
         [self addConstraint: NSLC(keys[0], self, NSLayoutAttributeLeft, 1, 0)];
         
-        // last key should be at right edge
+        // last key should be at right edge (helps size the containing view)
         [self addConstraint: NSLC(keys[nKeys-1], self, NSLayoutAttributeRight, 1, 0)];
     }
     

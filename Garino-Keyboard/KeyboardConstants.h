@@ -15,17 +15,19 @@ enum {
     kKeyboardHeightLandscape =  114,
 };
 
-#define kKeySpacerY         (-5.0f)
-#define kKeyWidthFactor     (1.0f / kNumberOfKeysPerRow)
-
-#define kKeyNormalBorderWidth (0.5f)
-#define kKeyTouchedBorderWidth (2.0f)
-
 // Colors
 extern UIColor* kKeyboardBackgroundColor;
 extern UIColor* kKeyBackgroundColor;
 extern UIColor* kKeyFontColor;
 extern UIColor* kKeyBorderColor;
+
+// Border
+extern CGFloat kKeyNormalBorderWidth;
+extern CGFloat kKeyTouchedBorderWidth;
+
+// Spacing
+extern CGFloat kKeySpacerY;
+
 
 @interface KeyboardConstants : NSObject
 

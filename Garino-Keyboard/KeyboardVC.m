@@ -76,15 +76,49 @@ const ShiftState nextShiftState[] = { Shifted, Unshifted };
 {
     [super viewDidLoad];
     
-    [self.keyboardView appendRowOfKeys:@[ @"q", @"w", @"e", @"r", @"t", @"y", @"u", @"i", @"o", @"p" ]];
-    [self.keyboardView appendRowOfKeys:@[ @"a", @"s", @"d", @"f", @"g", @"h", @"j", @"k", @"l" ]];
-    [self.keyboardView appendRowOfKeys:@[ @"🌍", @"z", @"x", @"c", @"v", @"b", @"n", @"m", @".", @"?"]];
+    NSArray* row1 = @[ [Key key:@"q"],
+                       [Key key:@"w"],
+                       [Key key:@"e"],
+                       [Key key:@"r"],
+                       [Key key:@"t"],
+                       [Key key:@"y"],
+                       [Key key:@"u"],
+                       [Key key:@"i"],
+                       [Key key:@"o"],
+                       [Key key:@"p"] ];
+    
+    NSArray* row2 = @[ [Key key:@"a"],
+                       [Key key:@"s"],
+                       [Key key:@"d"],
+                       [Key key:@"f"],
+                       [Key key:@"g"],
+                       [Key key:@"h"],
+                       [Key key:@"j"],
+                       [Key key:@"k"],
+                       [Key key:@"l"] ];
+    
+    NSArray* row3 = @[ [Key key:@"🌍"],
+                       [Key key:@"z"],
+                       [Key key:@"x"],
+                       [Key key:@"c"],
+                       [Key key:@"v"],
+                       [Key key:@"b"],
+                       [Key key:@"n"],
+                       [Key key:@"m"],
+                       [Key key:@"."],
+                       [Key key:@"?"] ];
+    
+    [self.keyboardView appendRowOfKeys:row1];
+    [self.keyboardView appendRowOfKeys:row2];
+    [self.keyboardView appendRowOfKeys:row3];
     
     [self.view addSubview:self.keyboardView];
     
     // REQUIRED: next keyboard button, we use the first key in row3
-//    [self.row3key1 removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-//    [self.row3key1 addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
+    Key* nextKeyboardButton = row3[0];
+    nextKeyboardButton.userInteractionEnabled = YES;
+    [nextKeyboardButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
+    [nextKeyboardButton addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
     
     self.backspaceGR = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(backspaceGesture:)];
     self.backspaceGR.direction = UISwipeGestureRecognizerDirectionLeft;
