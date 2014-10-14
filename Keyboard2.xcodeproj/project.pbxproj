@@ -14,8 +14,7 @@
 		8E74957519DA65AD00B9EC9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E74957319DA65AD00B9EC9B /* Main.storyboard */; };
 		8E74957719DA65AD00B9EC9B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E74957619DA65AD00B9EC9B /* Images.xcassets */; };
 		8E74957A19DA65AD00B9EC9B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E74957819DA65AD00B9EC9B /* LaunchScreen.xib */; };
-		8E74958619DA65AD00B9EC9B /* Keyboard2Tests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74958519DA65AD00B9EC9B /* Keyboard2Tests.m */; };
-		8E74959919DA65EE00B9EC9B /* KeyboardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74959819DA65EE00B9EC9B /* KeyboardViewController.m */; };
+		8E74959919DA65EE00B9EC9B /* KeyboardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74959819DA65EE00B9EC9B /* KeyboardVC.m */; };
 		8E74959C19DA65EE00B9EC9B /* Garino-Keyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8E7495D319DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
 		8E7495D419DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
@@ -75,26 +74,20 @@
 		8E74957619DA65AD00B9EC9B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		8E74957919DA65AD00B9EC9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		8E74957F19DA65AD00B9EC9B /* Keyboard2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Keyboard2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E74958419DA65AD00B9EC9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E74958519DA65AD00B9EC9B /* Keyboard2Tests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Keyboard2Tests.m; sourceTree = "<group>"; };
 		8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Garino-Keyboard.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E74959619DA65EE00B9EC9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E74959719DA65EE00B9EC9B /* KeyboardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardViewController.h; sourceTree = "<group>"; };
-		8E74959819DA65EE00B9EC9B /* KeyboardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardViewController.m; sourceTree = "<group>"; };
+		8E74959719DA65EE00B9EC9B /* KeyboardVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardVC.h; sourceTree = "<group>"; };
+		8E74959819DA65EE00B9EC9B /* KeyboardVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeyboardVC.m; sourceTree = "<group>"; };
 		8E7495A319DA68B100B9EC9B /* NSLayoutConstraint+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSLayoutConstraint+Additions.h"; path = "Garino-Keyboard/NSLayoutConstraint+Additions.h"; sourceTree = "<group>"; };
 		8E7495D119DA72DC00B9EC9B /* UtilitiesUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesUI.h; sourceTree = "<group>"; };
 		8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UtilitiesUI.m; sourceTree = "<group>"; };
-		8E887C8319DC440A00102F0E /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = System/Library/Frameworks/CoreVideo.framework; sourceTree = SDKROOT; };
-		8E887C8519DC441300102F0E /* CoreMedia.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreMedia.framework; path = System/Library/Frameworks/CoreMedia.framework; sourceTree = SDKROOT; };
-		8E887C8719DC441A00102F0E /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
-		8E887C8919DC442100102F0E /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = System/Library/Frameworks/ImageIO.framework; sourceTree = SDKROOT; };
-		8E887C8B19DC443000102F0E /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		8E973A9D19E6AFD1006C4694 /* SampleInputVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SampleInputVC.h; sourceTree = "<group>"; };
-		8E973A9E19E6AFD1006C4694 /* SampleInputVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SampleInputVC.m; sourceTree = "<group>"; };
 		8EDDBEE019EC247600AD2D49 /* KeyboardConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardConstants.h; sourceTree = "<group>"; };
 		8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardConstants.m; sourceTree = "<group>"; };
 		8EDDBEE319EC30B300AD2D49 /* KeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardView.h; sourceTree = "<group>"; };
 		8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardView.m; sourceTree = "<group>"; };
+		8EF92A2419ED477600D53AE2 /* Keyboard-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Keyboard-Prefix.pch"; sourceTree = "<group>"; };
+		8EF92A2619ED4B8300D53AE2 /* Keyboard2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Keyboard2.entitlements; sourceTree = "<group>"; };
+		8EF92A2719ED4D3B00D53AE2 /* Garino-Keyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Garino-Keyboard.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,19 +118,9 @@
 		8E74955D19DA65AD00B9EC9B = {
 			isa = PBXGroup;
 			children = (
-				8E973A9D19E6AFD1006C4694 /* SampleInputVC.h */,
-				8E973A9E19E6AFD1006C4694 /* SampleInputVC.m */,
-				8E887C8B19DC443000102F0E /* QuartzCore.framework */,
-				8E887C8919DC442100102F0E /* ImageIO.framework */,
-				8E887C8719DC441A00102F0E /* AVFoundation.framework */,
-				8E887C8519DC441300102F0E /* CoreMedia.framework */,
-				8E887C8319DC440A00102F0E /* CoreVideo.framework */,
 				8E74956819DA65AD00B9EC9B /* Keyboard2 */,
-				8E74958219DA65AD00B9EC9B /* Keyboard2Tests */,
 				8E74959419DA65EE00B9EC9B /* Garino-Keyboard */,
-				8E7495A319DA68B100B9EC9B /* NSLayoutConstraint+Additions.h */,
-				8E7495D119DA72DC00B9EC9B /* UtilitiesUI.h */,
-				8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */,
+				8EF92A2319ED473000D53AE2 /* Utilities */,
 				8E74956719DA65AD00B9EC9B /* Products */,
 			);
 			sourceTree = "<group>";
@@ -155,6 +138,7 @@
 		8E74956819DA65AD00B9EC9B /* Keyboard2 */ = {
 			isa = PBXGroup;
 			children = (
+				8EF92A2619ED4B8300D53AE2 /* Keyboard2.entitlements */,
 				8E74956D19DA65AD00B9EC9B /* AppDelegate.h */,
 				8E74956E19DA65AD00B9EC9B /* AppDelegate.m */,
 				8E74957019DA65AD00B9EC9B /* ViewController.h */,
@@ -176,42 +160,37 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		8E74958219DA65AD00B9EC9B /* Keyboard2Tests */ = {
-			isa = PBXGroup;
-			children = (
-				8E74958519DA65AD00B9EC9B /* Keyboard2Tests.m */,
-				8E74958319DA65AD00B9EC9B /* Supporting Files */,
-			);
-			path = Keyboard2Tests;
-			sourceTree = "<group>";
-		};
-		8E74958319DA65AD00B9EC9B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				8E74958419DA65AD00B9EC9B /* Info.plist */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
 		8E74959419DA65EE00B9EC9B /* Garino-Keyboard */ = {
 			isa = PBXGroup;
 			children = (
+				8EF92A2719ED4D3B00D53AE2 /* Garino-Keyboard.entitlements */,
 				8EDDBEE019EC247600AD2D49 /* KeyboardConstants.h */,
 				8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */,
-				8E74959719DA65EE00B9EC9B /* KeyboardViewController.h */,
-				8E74959819DA65EE00B9EC9B /* KeyboardViewController.m */,
+				8E74959719DA65EE00B9EC9B /* KeyboardVC.h */,
+				8E74959819DA65EE00B9EC9B /* KeyboardVC.m */,
 				8EDDBEE319EC30B300AD2D49 /* KeyboardView.h */,
 				8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */,
 				8E3C374119E9CF56009DD1A6 /* Key.h */,
 				8E3C374219E9CF56009DD1A6 /* Key.m */,
-				8E74959519DA65EE00B9EC9B /* Supporting Files */,
+				8EF92A2519ED47BA00D53AE2 /* Supporting Files */,
 			);
 			path = "Garino-Keyboard";
 			sourceTree = "<group>";
 		};
-		8E74959519DA65EE00B9EC9B /* Supporting Files */ = {
+		8EF92A2319ED473000D53AE2 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				8E7495A319DA68B100B9EC9B /* NSLayoutConstraint+Additions.h */,
+				8E7495D119DA72DC00B9EC9B /* UtilitiesUI.h */,
+				8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */,
+			);
+			name = Utilities;
+			sourceTree = "<group>";
+		};
+		8EF92A2519ED47BA00D53AE2 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				8EF92A2419ED477600D53AE2 /* Keyboard-Prefix.pch */,
 				8E74959619DA65EE00B9EC9B /* Info.plist */,
 			);
 			name = "Supporting Files";
@@ -286,6 +265,12 @@
 				TargetAttributes = {
 					8E74956519DA65AD00B9EC9B = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = G69KC2U64D;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 					8E74957E19DA65AD00B9EC9B = {
 						CreatedOnToolsVersion = 6.0.1;
@@ -293,6 +278,12 @@
 					};
 					8E74959219DA65EE00B9EC9B = {
 						CreatedOnToolsVersion = 6.0.1;
+						DevelopmentTeam = G69KC2U64D;
+						SystemCapabilities = {
+							com.apple.ApplicationGroups.iOS = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -359,7 +350,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E74958619DA65AD00B9EC9B /* Keyboard2Tests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -370,7 +360,7 @@
 				8EDDBEE219EC247600AD2D49 /* KeyboardConstants.m in Sources */,
 				8E7495D419DA72DC00B9EC9B /* UtilitiesUI.m in Sources */,
 				8EDDBEE519EC30B300AD2D49 /* KeyboardView.m in Sources */,
-				8E74959919DA65EE00B9EC9B /* KeyboardViewController.m in Sources */,
+				8E74959919DA65EE00B9EC9B /* KeyboardVC.m in Sources */,
 				8E3C374319E9CF56009DD1A6 /* Key.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,9 +485,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Keyboard2/Keyboard2.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Keyboard2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Debug;
 		};
@@ -505,9 +499,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Keyboard2/Keyboard2.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = Keyboard2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 			};
 			name = Release;
 		};
@@ -548,13 +546,32 @@
 		8E7495A019DA65EE00B9EC9B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CODE_SIGN_ENTITLEMENTS = "Garino-Keyboard/Garino-Keyboard.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Garino-Keyboard/Keyboard-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
 				);
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = "Garino-Keyboard/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -562,9 +579,28 @@
 		8E7495A119DA65EE00B9EC9B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_WARN_ASSIGN_ENUM = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_RECEIVER_WEAK = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES;
+				CODE_SIGN_ENTITLEMENTS = "Garino-Keyboard/Garino-Keyboard.entitlements";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "Garino-Keyboard/Keyboard-Prefix.pch";
+				GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_SIGN_COMPARE = YES;
 				INFOPLIST_FILE = "Garino-Keyboard/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

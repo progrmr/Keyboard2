@@ -7,7 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "Key.h"
 
-@interface KeyboardView : UIView
+@interface KeyboardView : UIControl
+
+@property (nonatomic, assign)   ShiftState  shiftState;
+@property (nonatomic, readonly) NSArray*    keyboardRows;
+
+- (void)appendRowOfKeys:(NSArray*)keyTitles;
 
 @end

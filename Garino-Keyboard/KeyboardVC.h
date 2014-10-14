@@ -1,5 +1,5 @@
 //
-//  KeyboardViewController.h
+//  KeyboardVC.h
 //  Garino-Keyboard
 //
 //  Created by Gary Morris on 9/29/14.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface KeyboardViewController : UIInputViewController
+@interface KeyboardVC : UIInputViewController
 
 @end

@@ -16,8 +16,6 @@ enum {
 };
 
 #define kKeySpacerY         (-5.0f)
-#define kKeyHeightPortrait  ((kKeyboardHeightPortrait  + (-kKeySpacerY*(kNumberOfRows-1))) / kNumberOfRows)
-#define kKeyHeightLandscape ((kKeyboardHeightLandscape + (-kKeySpacerY*(kNumberOfRows-1))) / kNumberOfRows)
 #define kKeyWidthFactor     (1.0f / kNumberOfKeysPerRow)
 
 #define kKeyNormalBorderWidth (0.5f)
