@@ -12,7 +12,6 @@
 @interface KeyboardView : UIControl
 
 @property (nonatomic, assign)   ShiftState  shiftState;
-@property (nonatomic, readonly) NSArray*    keyboardRows;
 
 - (void)appendRowOfKeys:(NSArray*)keyTitles;
 

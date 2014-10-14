@@ -37,8 +37,6 @@ const ShiftState nextShiftState[] = { Shifted, Unshifted };
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        NSLog(@"%s", __PRETTY_FUNCTION__);
-        
         _keyboardView = [[KeyboardView alloc] init];
     }
     return self;
@@ -61,11 +59,11 @@ const ShiftState nextShiftState[] = { Shifted, Unshifted };
     // update keyboard height constraint for orientation change
     const CGSize screenSize = [UIScreen mainScreen].bounds.size;
     const BOOL isLandscape = screenSize.width > screenSize.height;
-    const long preferredHeight = isLandscape ? kKeyboardHeightLandscape : kKeyboardHeightPortrait;
-    const BOOL heightChanged = lroundf(self.view.bounds.size.height) != preferredHeight;
+    const CGFloat preferredHeight = isLandscape ? kKeyboardHeightLandscape : kKeyboardHeightPortrait;
+    const BOOL heightChanged = lroundf(self.heightConstraint.constant) != lroundf(preferredHeight);
     
-    if (heightChanged) {
-        DLog(@"orientation: %@, height: %ld", isLandscape ? @"LANDSCAPE" : @"PORTRAIT", preferredHeight);
+    if (heightChanged && self.heightConstraint) {
+        DLog(@"orientation: %@, height: %0.0f, was: %0.0f", isLandscape ? @"LANDSCAPE" : @"PORTRAIT", preferredHeight, self.heightConstraint.constant);
 
         self.heightConstraint.constant = preferredHeight;
         [self.view setNeedsUpdateConstraints];

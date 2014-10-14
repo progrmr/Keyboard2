@@ -15,9 +15,9 @@
     BOOL _touching;
 }
 
-@property (nonatomic, strong) NSMutableArray* keyRows;
+@property (nonatomic, strong) NSMutableArray* keyRows;      // array of array of Key
 @property (nonatomic, assign) CGFloat         keyHeight;
-@property (nonatomic, strong) NSMutableArray* keyHeights;
+@property (nonatomic, strong) NSMutableArray* keyHeights;   // array of NSLayoutConstraint
 
 @end
 
@@ -39,11 +39,6 @@
     return self;
 }
 
-- (NSArray*)keyboardRows
-{
-    return _keyRows;
-}
-
 - (void)setShiftState:(ShiftState)shiftState
 {
     if (_shiftState != shiftState) {
@@ -59,11 +54,11 @@
 
 - (void)setKeyHeight:(CGFloat)keyHeight
 {
-    DLog(@"%0.1f", keyHeight);
-
     if (_keyHeight != keyHeight) {
         _keyHeight = keyHeight;
    
+        DLog(@"%0.1f", keyHeight);
+        
         for (NSLayoutConstraint* heightConstraint in self.keyHeights) {
             heightConstraint.constant = keyHeight;
         }
@@ -76,23 +71,15 @@
 {
     const CGRect oldFrame = self.frame;
     
-    DLog(@"%@", NSStringFromCGRect(frame));
-    
     [super setFrame:frame];
 
-    if (!CGRectEqualToRect(oldFrame, frame)) {
-        const CGFloat keyboardHeight = frame.size.height;
-        const CGFloat keyHeight = (keyboardHeight + (-kKeySpacerY * (kNumberOfRows-1))) / kNumberOfRows;
+    if (oldFrame.size.height != frame.size.height) {
+        DLog(@"%@", NSStringFromCGRect(frame));
         
-        self.keyHeight = keyHeight;
+        const CGFloat keyboardHeight = frame.size.height;
+        const CGFloat spaceBetweenRows = kKeySpacerY * (kNumberOfRows-1);
+        self.keyHeight = (keyboardHeight - spaceBetweenRows) / kNumberOfRows;
     }
-}
-
-- (void)setBounds:(CGRect)bounds
-{
-    DLog(@"%@", NSStringFromCGRect(bounds));
-    
-    [super setBounds:bounds];
 }
 
 - (void)appendRowOfKeys:(NSArray *)keys
@@ -153,10 +140,9 @@
 //-----------------------------------------------------------------------
 - (void)touching:(UITouch*)touch
 {
-    const CGSize size = self.bounds.size;
     const CGPoint touchPoint  = [touch locationInView:self];
     
-    DLog(@"touchPoint: %@", NSStringFromCGPoint(touchPoint));
+    DLog(@"touchPoint: %4.0f,%4.0f", touchPoint.x, touchPoint.y);
     
 //    StationId newStation = (StationId) touchPoint.x / sectionWidth;
 //    
