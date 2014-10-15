@@ -106,9 +106,9 @@ const ShiftState nextShiftState[] = { Shifted, Unshifted };
                        [Key key:@"."],
                        [Key key:@"?"] ];
     
-    [self.keyboardView appendRowOfKeys:row1];
-    [self.keyboardView appendRowOfKeys:row2];
-    [self.keyboardView appendRowOfKeys:row3];
+    [self.keyboardView appendRowOfKeys:row1 target:self action:@selector(keyPressed:)];
+    [self.keyboardView appendRowOfKeys:row2 target:self action:@selector(keyPressed:)];
+    [self.keyboardView appendRowOfKeys:row3 target:self action:@selector(keyPressed:)];
     
     [self.view addSubview:self.keyboardView];
     

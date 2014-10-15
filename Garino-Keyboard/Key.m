@@ -50,7 +50,14 @@
         self.layer.borderWidth = kKeyNormalBorderWidth;
         self.layer.masksToBounds = YES;
         
-        [self setNeedsLayout];
+        [self setNeedsLayout];      // layoutSubviews computes cornerRadius
+        
+        // track touches to change looks when touched
+        [self addTarget:self action:@selector(touchStarted) forControlEvents:UIControlEventTouchDown];
+        [self addTarget:self action:@selector(touchStarted) forControlEvents:UIControlEventTouchDragEnter];
+        [self addTarget:self action:@selector(touchEnded)   forControlEvents:UIControlEventTouchUpInside];
+        [self addTarget:self action:@selector(touchEnded)   forControlEvents:UIControlEventTouchDragExit];
+        [self addTarget:self action:@selector(touchEnded)   forControlEvents:UIControlEventTouchCancel];
     }
     return self;
 }
@@ -88,6 +95,18 @@
             }
             break;
     }
+}
+
+#pragma mark - Touch Tracking
+
+- (void)touchStarted
+{
+    self.isTouched = YES;
+}
+
+- (void)touchEnded
+{
+    self.isTouched = NO;
 }
 
 @end

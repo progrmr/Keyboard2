@@ -9,16 +9,15 @@
 #import "KeyboardView.h"
 #import "KeyboardConstants.h"
 #import "Key.h"
+#import "CrosshairsView.h"
 #import "NSLayoutConstraint+Additions.h"
 
-@interface KeyboardView () {
-    BOOL _touching;
-}
-
+@interface KeyboardView ()
 @property (nonatomic, strong) NSMutableArray* keyRows;      // array of array of Key
 @property (nonatomic, assign) CGFloat         keyHeight;
+@property (nonatomic, assign) CGFloat         keyWidth;
 @property (nonatomic, strong) NSMutableArray* keyHeights;   // array of NSLayoutConstraint
-
+@property (nonatomic, strong) CrosshairsView* crossHairView;
 @end
 
 @implementation KeyboardView
@@ -32,11 +31,25 @@
         _keyHeights = [NSMutableArray arrayWithCapacity:kNumberOfKeysPerRow * kNumberOfRows];
         _keyHeight  = kKeyboardHeightPortrait;
         
+        _crossHairView  = [[CrosshairsView alloc] init];
+        _crossHairView.autoresizingMask = 0;        // manually resized in layoutSubviews
+        _crossHairView.hidden = YES;
+        [self addSubview:_crossHairView];
+        
         self.userInteractionEnabled = YES;
         self.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
         self.backgroundColor  = kKeyboardBackgroundColor;
     }
     return self;
+}
+
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+    CGRect bounds = self.bounds;
+    bounds = CGRectInset(bounds, -bounds.size.width/2, -bounds.size.height/2);
+    self.crossHairView.frame = bounds;
 }
 
 - (void)setShiftState:(ShiftState)shiftState
@@ -82,7 +95,7 @@
     }
 }
 
-- (void)appendRowOfKeys:(NSArray *)keys
+- (void)appendRowOfKeys:(NSArray *)keys target:(id)target action:(SEL)action
 {
     const NSUInteger rowIndex = self.keyRows.count;
     const NSUInteger nKeys = keys.count;
@@ -112,6 +125,9 @@
             // left edge of key at right edge of previous key
             [self addConstraint: NSLC2(key, NSLayoutAttributeLeft, keys[keyIndex-1],  NSLayoutAttributeRight, 1, 0) ];
         }
+        
+        // add target/action for touch up inside
+        [key addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     }
     
     const BOOL oddNumber = (nKeys % 2) == 1;    // odd number of keys in row
@@ -130,51 +146,56 @@
     
     // add the row of keys array to the keyRows array
     [self.keyRows addObject:keys];
+    
+    // make sure the crossHairsView stays in front of the keys
+    [self bringSubviewToFront:self.crossHairView];
 }
 
 #pragma mark -
 #pragma mark Touch Tracking
+NSUInteger  curRow;         // currently touched keyboard row
+NSUInteger  curCol;         // currently touched keyboard column
+Key*        curKey;         // currently touched Key
+
+- (Key*)keyFromTouch:(UITouch*)touch
+{
+    const CGPoint touchPoint  = [touch locationInView:self];
+    DLog(@"touchPoint: %3.0f %3.0f", touchPoint.x, touchPoint.y);
+
+    self.crossHairView.center = touchPoint;
+    
+    curRow = (NSUInteger) ((touchPoint.y / self.bounds.size.height) * kNumberOfRows);
+    
+    NSArray* keys   = self.keyRows[curRow];
+    Key* firstKey   = keys[0];
+    CGRect keyFrame = firstKey.frame;
+    
+    CGFloat keyColumn = ((touchPoint.x - keyFrame.origin.x) / keyFrame.size.width);
+    curCol = (NSUInteger) keyColumn;
+    
+    Key* key = (curRow < keys.count) ? keys[curCol] : nil;
+    
+    CGPoint keyCenter = key.center;
+    CGFloat xOffset = fabsf(keyCenter.x-touchPoint.x);
+    CGFloat yOffset = fabsf(keyCenter.y-touchPoint.y);
+    CGFloat maxError = MAX(xOffset/keyFrame.size.width, yOffset/_keyHeight);
+    
+    self.crossHairView.crossColor = [UIColor colorWithRed:maxError*2 green:1-(maxError*2) blue:0 alpha:1];
+    
+    return key;
+}
 
 //-----------------------------------------------------------------------
 // touchingStation
 //-----------------------------------------------------------------------
-- (void)touching:(UITouch*)touch
-{
-    const CGPoint touchPoint  = [touch locationInView:self];
-    
-    DLog(@"touchPoint: %4.0f,%4.0f", touchPoint.x, touchPoint.y);
-    
-//    StationId newStation = (StationId) touchPoint.x / sectionWidth;
-//    
-//    // move curStationView to where the touch is while touch is down
-//    if (touchDragInProgress) {
-//        // move station view and label along with touch
-//        [self moveStationViewToX:touchPoint.x];
-//        [self moveStationLabel:curStationLabel XCoordinate:touchPoint.x];
-//        
-//    } else {
-//        CGFloat x = [self stationCenterX:newStation];
-//        [self moveStationViewToX:x];
-//        [self moveStationLabel:curStationLabel XCoordinate:x];
-//    }
-//    
-//    if (newStation >= nStations) newStation = nStations-1;
-//    
-//    if (newStation != curStation) {
-//        // Moved to a new station, update everyone
-//        self.curStation = newStation;
-//        
-//        // Invoke action routine
-//        [self sendActionsForControlEvents: UIControlEventValueChanged];
-//    }
-}
-
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     DLog(@"");
     if (event.type == UIEventTypeTouches) {
-        _touching = YES;
-        [self touching:touch];
+        self.crossHairView.hidden = NO;
+        
+        curKey = [self keyFromTouch:touch];
+        [curKey sendActionsForControlEvents:UIControlEventTouchDown];
     }
     return YES;
 }
@@ -182,25 +203,39 @@
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeTouches) {
-        _touching = YES;
-        [self touching:touch];
+        Key* newKey = [self keyFromTouch:touch];
+        if (newKey != curKey) {
+            // dragged to a new key
+            [curKey sendActionsForControlEvents:UIControlEventTouchDragExit];
+            [newKey sendActionsForControlEvents:UIControlEventTouchDragEnter];
+            curKey = newKey;
+        }
+        
     }
     return YES;
 }
 
 - (void)cancelTrackingWithEvent:(UIEvent*)event
 {
-    DLog(@"");
-    _touching = NO;
+    [curKey sendActionsForControlEvents:UIControlEventTouchCancel];
+    
+    self.crossHairView.hidden = YES;
+    DLog(@"\n\n");
 }
 
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    DLog(@"");
     if (event.type == UIEventTypeTouches) {
-        _touching = NO;
-        [self touching:touch];
+        Key* newKey = [self keyFromTouch:touch];
+        if (newKey != curKey) {
+            // dragged outside previous key
+            [curKey sendActionsForControlEvents:UIControlEventTouchDragExit];
+        }
+        [newKey sendActionsForControlEvents:UIControlEventTouchUpInside];
+        
+        self.crossHairView.hidden = YES;
     }
+    DLog(@"\n\n");
 }
 
 @end

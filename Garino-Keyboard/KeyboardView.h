@@ -13,6 +13,8 @@
 
 @property (nonatomic, assign)   ShiftState  shiftState;
 
-- (void)appendRowOfKeys:(NSArray*)keyTitles;
+// adds a row of keys to the keyboard,
+// also sets target/action on each key for TouchUpInside event
+- (void)appendRowOfKeys:(NSArray *)keys target:(id)target action:(SEL)action;
 
 @end

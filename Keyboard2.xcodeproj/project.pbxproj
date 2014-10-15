@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E2E7C1319EEAA2E00A309C8 /* CrosshairsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2E7C1219EEAA2E00A309C8 /* CrosshairsView.m */; };
 		8E3C374319E9CF56009DD1A6 /* Key.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C374219E9CF56009DD1A6 /* Key.m */; };
 		8E74956C19DA65AD00B9EC9B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74956B19DA65AD00B9EC9B /* main.m */; };
 		8E74956F19DA65AD00B9EC9B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74956E19DA65AD00B9EC9B /* AppDelegate.m */; };
@@ -61,6 +62,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		8E2E7C1119EEAA2E00A309C8 /* CrosshairsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrosshairsView.h; sourceTree = "<group>"; };
+		8E2E7C1219EEAA2E00A309C8 /* CrosshairsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CrosshairsView.m; sourceTree = "<group>"; };
 		8E3C374119E9CF56009DD1A6 /* Key.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Key.h; sourceTree = "<group>"; };
 		8E3C374219E9CF56009DD1A6 /* Key.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Key.m; sourceTree = "<group>"; };
 		8E74956619DA65AD00B9EC9B /* Keyboard2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Keyboard2.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -172,6 +175,8 @@
 				8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */,
 				8E3C374119E9CF56009DD1A6 /* Key.h */,
 				8E3C374219E9CF56009DD1A6 /* Key.m */,
+				8E2E7C1119EEAA2E00A309C8 /* CrosshairsView.h */,
+				8E2E7C1219EEAA2E00A309C8 /* CrosshairsView.m */,
 				8EF92A2519ED47BA00D53AE2 /* Supporting Files */,
 			);
 			path = "Garino-Keyboard";
@@ -362,6 +367,7 @@
 				8EDDBEE519EC30B300AD2D49 /* KeyboardView.m in Sources */,
 				8E74959919DA65EE00B9EC9B /* KeyboardVC.m in Sources */,
 				8E3C374319E9CF56009DD1A6 /* Key.m in Sources */,
+				8E2E7C1319EEAA2E00A309C8 /* CrosshairsView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
