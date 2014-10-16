@@ -211,7 +211,10 @@ const ShiftState nextShiftState[] = {
 
 - (void)returnGesture:(UISwipeGestureRecognizer*)gr
 {
-    [self.textDocumentProxy insertText:@"\r"];
+    ///[self.textDocumentProxy insertText:@"\r"];
+    
+    NSString* text = [self.textDocumentProxy documentContextBeforeInput];
+    DLog(@"text: \"%@\"", text);
 }
 
 - (void)shiftGesture:(UISwipeGestureRecognizer*)gr
