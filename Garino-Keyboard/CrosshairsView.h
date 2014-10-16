@@ -10,6 +10,7 @@
 
 @interface CrosshairsView : UIView
 
-@property (nonatomic, retain) UIColor* crossColor;
+@property (nonatomic, retain) UIColor* crossColor;      // default black
+@property (nonatomic, assign) CGFloat  lineWidth;       // default 1.0f
 
 @end

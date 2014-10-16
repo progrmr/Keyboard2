@@ -18,7 +18,9 @@
         self.userInteractionEnabled = NO;
         self.autoresizingMask   = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
         self.backgroundColor    = [UIColor clearColor];
-        self.crossColor         = [UIColor blackColor];
+        
+        _crossColor         = [UIColor blackColor];
+        _lineWidth = 1.0f;
     }
     return self;
 }
@@ -41,7 +43,6 @@
 	CGContextRef context = UIGraphicsGetCurrentContext();
 	
 	const CGFloat CENTERGAP = 4.5f;
-	const CGFloat THICKNESS = 1.0f;
 
 	CGContextSetFillColorWithColor(context, [_crossColor CGColor]);
 	
@@ -51,19 +52,19 @@
 	CGFloat centerY = self.bounds.size.height * 0.5f;
 	
 	CGContextFillRect(context,
-						CGRectMake(0, centerY-THICKNESS/2, 
-								   centerX-CENTERGAP, THICKNESS));
+						CGRectMake(0, centerY-_lineWidth/2,
+								   centerX-CENTERGAP, _lineWidth));
 	CGContextFillRect(context, 
-						CGRectMake(centerX+CENTERGAP, centerY-THICKNESS/2,
-								   centerX-CENTERGAP, THICKNESS));
+						CGRectMake(centerX+CENTERGAP, centerY-_lineWidth/2,
+								   centerX-CENTERGAP, _lineWidth));
 	
 	// draw the vertical line
 	CGContextFillRect(context,
-						CGRectMake(centerX-THICKNESS/2, 0, 
-								   THICKNESS, centerY-CENTERGAP));
+						CGRectMake(centerX-_lineWidth/2, 0,
+								   _lineWidth, centerY-CENTERGAP));
 	CGContextFillRect(context,
-						CGRectMake(centerX-THICKNESS/2, centerY+CENTERGAP,
-								   THICKNESS, centerY-CENTERGAP));
+						CGRectMake(centerX-_lineWidth/2, centerY+CENTERGAP,
+								   _lineWidth, centerY-CENTERGAP));
 }
 
 @end

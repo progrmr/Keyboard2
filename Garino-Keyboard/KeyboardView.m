@@ -160,7 +160,6 @@ Key*        curKey;         // currently touched Key
 - (Key*)keyFromTouch:(UITouch*)touch
 {
     const CGPoint touchPoint  = [touch locationInView:self];
-    DLog(@"touchPoint: %3.0f %3.0f", touchPoint.x, touchPoint.y);
 
     self.crossHairView.center = touchPoint;
     
@@ -178,9 +177,28 @@ Key*        curKey;         // currently touched Key
     CGPoint keyCenter = key.center;
     CGFloat xOffset = fabsf(keyCenter.x-touchPoint.x);
     CGFloat yOffset = fabsf(keyCenter.y-touchPoint.y);
-    CGFloat maxError = MAX(xOffset/keyFrame.size.width, yOffset/_keyHeight);
+    CGFloat maxError = MAX(xOffset/keyFrame.size.width, yOffset/_keyHeight) * 2.0f;
     
-    self.crossHairView.crossColor = [UIColor colorWithRed:maxError*2 green:1-(maxError*2) blue:0 alpha:1];
+    DLog(@"touchPoint: %3.0f %3.0f, err: %0.2f", touchPoint.x, touchPoint.y, maxError);
+    
+    //self.crossHairView.crossColor = [UIColor colorWithRed:maxError green:1-maxError blue:0 alpha:1];
+    if (maxError > 0.60f) {
+        self.crossHairView.crossColor = [UIColor redColor];
+    } else {
+        self.crossHairView.crossColor = [UIColor colorWithRed:0 green:1 blue:0 alpha:0.7f];
+    }
+    
+    if (maxError > 0.82f) {
+        self.crossHairView.lineWidth = 3.0f;
+    } else if (maxError > 0.76f) {
+        self.crossHairView.lineWidth = 2.5f;
+    } else if (maxError > 0.68f) {
+        self.crossHairView.lineWidth = 2.0f;
+    } else if (maxError > 0.60f) {
+        self.crossHairView.lineWidth = 1.5f;
+    } else {
+        self.crossHairView.lineWidth = 1.0f;
+    }
     
     return key;
 }
