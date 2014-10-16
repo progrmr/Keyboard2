@@ -179,7 +179,7 @@ Key*        curKey;         // currently touched Key
     CGFloat yOffset = fabsf(keyCenter.y-touchPoint.y);
     CGFloat maxError = MAX(xOffset/keyFrame.size.width, yOffset/_keyHeight) * 2.0f;
     
-    DLog(@"touchPoint: %3.0f %3.0f, err: %0.2f", touchPoint.x, touchPoint.y, maxError);
+    ///DLog(@"touchPoint: %3.0f %3.0f, err: %0.2f", touchPoint.x, touchPoint.y, maxError);
     
     //self.crossHairView.crossColor = [UIColor colorWithRed:maxError green:1-maxError blue:0 alpha:1];
     if (maxError > 0.60f) {
