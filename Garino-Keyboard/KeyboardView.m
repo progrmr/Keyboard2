@@ -164,20 +164,39 @@ Key*        curKey;         // currently touched Key
     self.crossHairView.center = touchPoint;
     
     curRow = (NSUInteger) ((touchPoint.y / self.bounds.size.height) * kNumberOfRows);
-    
+    if (curRow >= self.keyRows.count) {
+        curRow = self.keyRows.count - 1;
+    }
     NSArray* keys   = self.keyRows[curRow];
     Key* firstKey   = keys[0];
     CGRect keyFrame = firstKey.frame;
     
     CGFloat keyColumn = ((touchPoint.x - keyFrame.origin.x) / keyFrame.size.width);
     curCol = (NSUInteger) keyColumn;
-    
-    Key* key = (curRow < keys.count) ? keys[curCol] : nil;
+    if (curCol >= keys.count) {
+        curCol = keys.count - 1;
+    }
+    Key* key = keys[curCol];
     
     CGPoint keyCenter = key.center;
-    CGFloat xOffset = fabsf(keyCenter.x-touchPoint.x);
-    CGFloat yOffset = fabsf(keyCenter.y-touchPoint.y);
-    CGFloat maxError = MAX(xOffset/keyFrame.size.width, yOffset/_keyHeight) * 2.0f;
+    
+    CGFloat xOffset = touchPoint.x - keyCenter.x;
+    CGFloat xError  = xOffset / (keyFrame.size.width * 0.5f);
+    if (xError < 0 && curCol == 0) {
+        xError = 0;
+    } else if (xError > 0 && curCol == keys.count-1) {
+        xError = 0;
+    }
+    
+    CGFloat yOffset = touchPoint.y - keyCenter.y;
+    CGFloat yError  = yOffset / (keyFrame.size.height * 0.5f);
+    if (yError < 0 && curRow == 0) {
+        yError = 0;     // ignore errors off the top side of the first row, there is no row above it
+    } else if (yError > 0 && curRow == kNumberOfRows-1) {
+        yError = 0;     // ignore errors off the bottom side of the last row, no row below it
+    }
+    
+    CGFloat maxError = MAX(fabsf(xError), fabsf(yError));
     
     ///DLog(@"touchPoint: %3.0f %3.0f, err: %0.2f", touchPoint.x, touchPoint.y, maxError);
     
@@ -208,7 +227,6 @@ Key*        curKey;         // currently touched Key
 //-----------------------------------------------------------------------
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    DLog(@"");
     if (event.type == UIEventTypeTouches) {
         self.crossHairView.hidden = NO;
         
@@ -238,7 +256,6 @@ Key*        curKey;         // currently touched Key
     [curKey sendActionsForControlEvents:UIControlEventTouchCancel];
     
     self.crossHairView.hidden = YES;
-    DLog(@"\n\n");
 }
 
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
@@ -251,9 +268,13 @@ Key*        curKey;         // currently touched Key
         }
         [newKey sendActionsForControlEvents:UIControlEventTouchUpInside];
         
+        // if we are shifted (not shift locked) then unshift now
+        if (self.shiftState == Shifted) {
+            self.shiftState = Unshifted;
+        }
+        
         self.crossHairView.hidden = YES;
     }
-    DLog(@"\n\n");
 }
 
 @end

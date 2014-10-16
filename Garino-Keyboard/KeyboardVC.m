@@ -25,13 +25,20 @@
 @property (nonatomic, strong) UISwipeGestureRecognizer* spaceGR;
 @property (nonatomic, strong) UISwipeGestureRecognizer* returnGR;
 @property (nonatomic, strong) UISwipeGestureRecognizer* shiftGR;
+@property (nonatomic, strong) UISwipeGestureRecognizer* shiftLockGR;
 
 @end
 
 
 @implementation KeyboardVC
 
-const ShiftState nextShiftState[] = { Shifted, Unshifted };
+const ShiftState nextShiftState[] = {
+    /* Unshifted  -> */  Shifted,
+    /* Shifted    -> */  Number_Lock,
+    /* Shift_Lock -> */  Unshifted,
+    /* Number_Lock -> */ Symbol_Lock,
+    /* Symbol_Lock -> */ Number_Lock,
+};
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -130,10 +137,15 @@ const ShiftState nextShiftState[] = { Shifted, Unshifted };
     self.shiftGR     = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(shiftGesture:)];
     self.shiftGR.direction = UISwipeGestureRecognizerDirectionUp;
     
+    self.shiftLockGR = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(shiftLockGesture:)];
+    self.shiftLockGR.numberOfTouchesRequired = 2;
+    self.shiftLockGR.direction = UISwipeGestureRecognizerDirectionUp;
+    
     [self.view addGestureRecognizer:self.backspaceGR];
     [self.view addGestureRecognizer:self.spaceGR];
     [self.view addGestureRecognizer:self.returnGR];
     [self.view addGestureRecognizer:self.shiftGR];
+    [self.view addGestureRecognizer:self.shiftLockGR];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -205,6 +217,15 @@ const ShiftState nextShiftState[] = { Shifted, Unshifted };
 - (void)shiftGesture:(UISwipeGestureRecognizer*)gr
 {
     self.keyboardView.shiftState = nextShiftState[self.keyboardView.shiftState];
- }
+}
+
+- (void)shiftLockGesture:(UISwipeGestureRecognizer*)gr
+{
+    if (self.keyboardView.shiftState != Shift_Lock) {
+        self.keyboardView.shiftState = Shift_Lock;
+    } else {
+        self.keyboardView.shiftState = Unshifted;
+    }
+}
 
 @end

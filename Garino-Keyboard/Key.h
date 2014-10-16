@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-typedef enum { Unshifted = 0, Shifted } ShiftState;
+typedef enum { Unshifted = 0, Shifted, Shift_Lock, Number_Lock, Symbol_Lock } ShiftState;
 
 @interface Key : UIButton
 

@@ -11,8 +11,8 @@
 enum {
     kNumberOfRows =             3,
     kNumberOfKeysPerRow =       10,
-    kKeyboardHeightPortrait =   132,
-    kKeyboardHeightLandscape =  114,
+    kKeyboardHeightPortrait =   kNumberOfRows * 44,
+    kKeyboardHeightLandscape =  kNumberOfRows * 38,
 };
 
 // Colors
