@@ -76,9 +76,13 @@
 
 - (void)setIsTouched:(BOOL)isTouched
 {
-    _isTouched = isTouched;
-    
-    self.layer.borderWidth = isTouched ? kKeyTouchedBorderWidth : kKeyNormalBorderWidth;
+    if (_isTouched != isTouched) {
+        _isTouched = isTouched;
+        
+        DLog(@"key %@ %@", self.title, isTouched ? @"touched" : @"released");
+        
+        self.layer.borderWidth = isTouched ? kKeyTouchedBorderWidth : kKeyNormalBorderWidth;
+    }
 }
 
 - (void)setShiftState:(ShiftState)shiftState
@@ -90,9 +94,13 @@
             [self setTitle:self.title forState:UIControlStateNormal];
             break;
         case Shifted:
+        case Shift_Lock:
             if (self.isAlpha) {
                 [self setTitle:self.uppercaseTitle forState:UIControlStateNormal];
             }
+            break;
+        case Number_Lock:
+        case Symbol_Lock:
             break;
     }
 }

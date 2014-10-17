@@ -18,5 +18,6 @@ typedef enum { Unshifted = 0, Shifted, Shift_Lock, Number_Lock, Symbol_Lock } Sh
 
 @property (nonatomic, assign) BOOL          isTouched;
 @property (nonatomic, assign) ShiftState    shiftState;
+@property (nonatomic, readonly) NSString*   title;
 
 @end

@@ -188,9 +188,9 @@ const ShiftState nextShiftState[] = {
 //    }
 }
 
-- (void)keyPressed:(UIButton*)sender
+- (void)keyPressed:(Key*)sender
 {
-    NSString* title = [sender titleForState:UIControlStateNormal];
+    NSString* title = sender.title;
     
     [self.textDocumentProxy insertText:title];
     
