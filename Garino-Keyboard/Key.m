@@ -19,11 +19,12 @@
 
 @implementation Key
 
-- (id)initWithTitle:(NSString*)title
+- (id)initWithTitle:(NSString*)title width:(CGFloat)width
 {
     self = [super init];
     if (self) {
         _title = title;
+        _width = width;
         
         unichar ch = [title characterAtIndex:0];
         _isAlpha = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:ch];
@@ -64,7 +65,12 @@
 
 + (instancetype)key:(NSString *)title
 {
-    return [[Key alloc] initWithTitle:title];
+    return [[Key alloc] initWithTitle:title width:1];
+}
+
++ (instancetype)key:(NSString*)title width:(CGFloat)width
+{
+    return [[Key alloc] initWithTitle:title width:width];
 }
 
 - (void)layoutSubviews

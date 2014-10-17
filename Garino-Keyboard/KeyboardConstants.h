@@ -9,8 +9,8 @@
 #import <UIKit/UIKit.h>
 
 enum {
-    kNumberOfRows =             3,
-    kNumberOfKeysPerRow =       10,
+    kNumberOfRows =             4,
+    kNumberOfKeysPerRow =       9,
     kKeyboardHeightPortrait =   kNumberOfRows * 44,
     kKeyboardHeightLandscape =  kNumberOfRows * 38,
 };

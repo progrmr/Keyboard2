@@ -80,6 +80,15 @@
     }
 }
 
+- (void)setKeyWidth:(CGFloat)keyWidth
+{
+    if (_keyWidth != keyWidth) {
+        _keyWidth = keyWidth;
+        
+        DLog(@"%0.1f", keyWidth);
+    }
+}
+
 - (void)setFrame:(CGRect)frame
 {
     const CGRect oldFrame = self.frame;
@@ -112,7 +121,7 @@
         [self addSubview:key];
         
         // width of key
-        [self addConstraint: NSLC(key, self, NSLayoutAttributeWidth,  1.0f / kNumberOfKeysPerRow, 0)];
+        [self addConstraint: NSLC(key, self, NSLayoutAttributeWidth,  key.width / (CGFloat)kNumberOfKeysPerRow, 0)];
         
         // height of key
         NSLayoutConstraint* keyHeight = NSLC2(key, NSLayoutAttributeHeight, nil, NSLayoutAttributeNotAnAttribute, 0, self.keyHeight);
@@ -133,18 +142,22 @@
         [key addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     }
     
-    const BOOL oddNumber = (nKeys % 2) == 1;    // odd number of keys in row
-
-    if (oddNumber) {
-        // the number of keys in this row is odd, then center X the middle key
-        [self addConstraint: NSLC(keys[nKeys/2], self, NSLayoutAttributeCenterX, 1, 0)];
+    if (nKeys == kNumberOfKeysPerRow) {
+        // this is a full row of keys, pin them to the view left and right bounds
+        [self addConstraint: NSLC(keys[0], self, NSLayoutAttributeLeft, 1, 0)];
+        [self addConstraint: NSLC(keys[nKeys-1], self, NSLayoutAttributeRight, 1, 0)];
         
     } else {
-        // the number of keys in this row is even then first key should be at left edge
-        [self addConstraint: NSLC(keys[0], self, NSLayoutAttributeLeft, 1, 0)];
+        // this is a partial row of keys
+        const BOOL oddNumber = (nKeys % 2) == 1;    // odd number of keys in row
         
-        // last key should be at right edge (helps size the containing view)
-        [self addConstraint: NSLC(keys[nKeys-1], self, NSLayoutAttributeRight, 1, 0)];
+        if (oddNumber) {
+            // the number of keys in this row is odd, then center X the middle key
+            [self addConstraint: NSLC(keys[nKeys/2], self, NSLayoutAttributeCenterX, 1, 0)];
+        } else {
+            // even number of keys in partial row, center the left edge of middle key
+            [self addConstraint: NSLC2(keys[nKeys/2], NSLayoutAttributeLeft, self, NSLayoutAttributeCenterX, 1, 0)];
+        }
     }
     
     // add the row of keys array to the keyRows array
@@ -159,22 +172,23 @@
 static Key* s_curKey;           // currently touched Key
 
 - (void)showCrossHairsForTouchPoint:(CGPoint)touchPoint
+                             forKey:(Key*)touchedKey
                       atKeyRowIndex:(NSUInteger)rowIndex
                       atKeyColIndex:(NSUInteger)colIndex
                     withMaxColIndex:(NSUInteger)maxColIndex
 {
-    CGPoint keyCenter = s_curKey.center;
+    CGRect keyFrame = touchedKey.frame;
     
-    CGFloat xOffset = touchPoint.x - keyCenter.x;
-    CGFloat xError  = xOffset / (self.keyWidth * 0.5f);
+    CGFloat xOffset = touchPoint.x - CGRectGetMidX(keyFrame);
+    CGFloat xError  = xOffset / (keyFrame.size.width * 0.5f);
     if (xError < 0 && colIndex == 0) {
         xError = 0;     // ignore errors off the left side of the leftmost key
     } else if (xError > 0 && colIndex == maxColIndex) {
         xError = 0;     // ignore errors off the right side of the rightmost key
     }
     
-    CGFloat yOffset = touchPoint.y - keyCenter.y;
-    CGFloat yError  = yOffset / (self.keyHeight * 0.5f);
+    CGFloat yOffset = touchPoint.y - CGRectGetMidY(keyFrame);
+    CGFloat yError  = yOffset / (keyFrame.size.height * 0.5f);
     if (yError < 0 && rowIndex == 0) {
         yError = 0;     // ignore errors off the top side of the first row, there is no row above it
     } else if (yError > 0 && rowIndex == kNumberOfRows-1) {
@@ -217,22 +231,26 @@ static Key* s_curKey;           // currently touched Key
     if (curRow >= self.keyRows.count) {
         curRow = self.keyRows.count - 1;
     }
-    NSArray* keys   = self.keyRows[curRow];
-    Key* firstKey   = keys[0];
-    CGRect keyFrame = firstKey.frame;
     
-    CGFloat keyColumn = ((touchPoint.x - keyFrame.origin.x) / keyFrame.size.width);
-    NSUInteger curCol = (NSUInteger) keyColumn;
-    if (curCol >= keys.count) {
-        curCol = keys.count - 1;
+    NSArray* keys   = self.keyRows[curRow];
+    Key* touchedKey = nil;
+    unsigned curCol = 0;
+    
+    for (; curCol<keys.count; curCol++) {
+        Key* key = keys[curCol];
+        if (CGRectContainsPoint(key.frame, touchPoint)) {
+            touchedKey = key;
+            break;
+        }
     }
     
     [self showCrossHairsForTouchPoint:touchPoint
+                               forKey:touchedKey
                         atKeyRowIndex:curRow
                         atKeyColIndex:curCol
                       withMaxColIndex:keys.count-1];
      
-    return keys[curCol];
+    return touchedKey;
 }
 
 //-----------------------------------------------------------------------
@@ -273,7 +291,6 @@ static Key* s_curKey;           // currently touched Key
         [s_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
         
         self.crossHairView.alpha = 0;
-        s_curKey = nil;
     }
 }
 
@@ -296,11 +313,10 @@ static Key* s_curKey;           // currently touched Key
             self.shiftState = Unshifted;
         }
         
-        [UIView animateWithDuration:0.2
+        [UIView animateWithDuration:0.25
                          animations:^{
                              self.crossHairView.alpha = 0;
                          }];
-        s_curKey = nil;
     }
 }
 

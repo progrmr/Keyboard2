@@ -81,8 +81,7 @@ const ShiftState nextShiftState[] = {
 {
     [super viewDidLoad];
     
-    NSArray* row1 = @[ [Key key:@"q"],
-                       [Key key:@"w"],
+    NSArray* row1 = @[ [Key key:@"w"],
                        [Key key:@"e"],
                        [Key key:@"r"],
                        [Key key:@"t"],
@@ -102,7 +101,7 @@ const ShiftState nextShiftState[] = {
                        [Key key:@"k"],
                        [Key key:@"l"] ];
     
-    NSArray* row3 = @[ [Key key:@"🌍"],
+    NSArray* row3 = @[ [Key key:@"⬆︎"],
                        [Key key:@"z"],
                        [Key key:@"x"],
                        [Key key:@"c"],
@@ -110,17 +109,26 @@ const ShiftState nextShiftState[] = {
                        [Key key:@"b"],
                        [Key key:@"n"],
                        [Key key:@"m"],
-                       [Key key:@"."],
-                       [Key key:@"?"] ];
+                       [Key key:@"⬅︎"],
+                       ];
+    
+    NSArray* row4 = @[
+                      [Key key:@"🌍"],
+                      [Key key:@" " width:4],
+                      [Key key:@"."],
+                      [Key key:@"?"],
+                      [Key key:@"↵" width:2],
+                      ];
     
     [self.keyboardView appendRowOfKeys:row1 target:self action:@selector(keyPressed:)];
     [self.keyboardView appendRowOfKeys:row2 target:self action:@selector(keyPressed:)];
     [self.keyboardView appendRowOfKeys:row3 target:self action:@selector(keyPressed:)];
+    [self.keyboardView appendRowOfKeys:row4 target:self action:@selector(keyPressed:)];
     
     [self.view addSubview:self.keyboardView];
     
-    // REQUIRED: next keyboard button, we use the first key in row3
-    Key* nextKeyboardButton = row3[0];
+    // REQUIRED: next keyboard button, we use the first key in the last row
+    Key* nextKeyboardButton = row4[0];
     nextKeyboardButton.userInteractionEnabled = YES;
     [nextKeyboardButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
     [nextKeyboardButton addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
