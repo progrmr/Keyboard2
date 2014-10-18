@@ -11,8 +11,14 @@
 enum {
     kNumberOfRows =             4,
     kNumberOfKeysPerRow =       9,
-    kKeyboardHeightPortrait =   kNumberOfRows * 44,
-    kKeyboardHeightLandscape =  kNumberOfRows * 38,
+    
+    kKeyHeightPortrait =        53,
+    kKeyHeightLandscape =       38,
+    
+    kKeyboardHeightPortrait =   kNumberOfRows * kKeyHeightPortrait,
+    kKeyboardHeightLandscape =  kNumberOfRows * kKeyHeightLandscape,
+    
+    kContextOffset =            60,
 };
 
 // Colors
@@ -20,6 +26,7 @@ extern UIColor* kKeyboardBackgroundColor;
 extern UIColor* kKeyBackgroundColor;
 extern UIColor* kKeyFontColor;
 extern UIColor* kKeyBorderColor;
+extern UIColor* kSpecialKeyColor;
 
 // Border
 extern CGFloat kKeyNormalBorderWidth;

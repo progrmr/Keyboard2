@@ -31,7 +31,7 @@
         _keyHeights = [NSMutableArray arrayWithCapacity:kNumberOfKeysPerRow * kNumberOfRows];
         _keyHeight  = kKeyboardHeightPortrait;
         
-        _crossHairView  = [[CrosshairsView alloc] init];
+        _crossHairView = [[CrosshairsView alloc] init];
         _crossHairView.autoresizingMask = 0;        // manually resized in layoutSubviews
         _crossHairView.alpha = 0;
         [self addSubview:_crossHairView];
@@ -55,6 +55,8 @@
 - (void)setShiftState:(ShiftState)shiftState
 {
     if (_shiftState != shiftState) {
+        DLog(@"change shift state from %d to %d", _shiftState, shiftState);
+        
         _shiftState = shiftState;
         
         for (NSArray* rowOfKeys in self.keyRows) {
@@ -114,6 +116,7 @@
     const BOOL firstRow = (rowIndex == 0);
     const NSLayoutAttribute belowAttr = firstRow ? NSLayoutAttributeTop : NSLayoutAttributeBottom;
     UIView* belowView = firstRow ? self : self.keyRows[rowIndex-1][0];
+    CGFloat rowWidth = 0;
     
     for (NSUInteger keyIndex=0; keyIndex<nKeys; keyIndex++) {
         Key* key = keys[keyIndex];
@@ -122,6 +125,7 @@
         
         // width of key
         [self addConstraint: NSLC(key, self, NSLayoutAttributeWidth,  key.width / (CGFloat)kNumberOfKeysPerRow, 0)];
+        rowWidth += key.width;
         
         // height of key
         NSLayoutConstraint* keyHeight = NSLC2(key, NSLayoutAttributeHeight, nil, NSLayoutAttributeNotAnAttribute, 0, self.keyHeight);
@@ -142,24 +146,16 @@
         [key addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
     }
     
-    if (nKeys == kNumberOfKeysPerRow) {
-        // this is a full row of keys, pin them to the view left and right bounds
-        [self addConstraint: NSLC(keys[0], self, NSLayoutAttributeLeft, 1, 0)];
-        [self addConstraint: NSLC(keys[nKeys-1], self, NSLayoutAttributeRight, 1, 0)];
-        
-    } else {
-        // this is a partial row of keys
-        const BOOL oddNumber = (nKeys % 2) == 1;    // odd number of keys in row
-        
-        if (oddNumber) {
-            // the number of keys in this row is odd, then center X the middle key
-            [self addConstraint: NSLC(keys[nKeys/2], self, NSLayoutAttributeCenterX, 1, 0)];
-        } else {
-            // even number of keys in partial row, center the left edge of middle key
-            [self addConstraint: NSLC2(keys[nKeys/2], NSLayoutAttributeLeft, self, NSLayoutAttributeCenterX, 1, 0)];
-        }
-    }
+    // this is a full row of keys, pin them to the view left and right bounds
+    [self addConstraint: NSLC(keys[0], self, NSLayoutAttributeLeft, 1, 0)];
     
+    if (lroundf(rowWidth) == kNumberOfKeysPerRow) {
+        DLog(@"row %d is full row of %0.0f keys", rowIndex, rowWidth);
+        [self addConstraint: NSLC(keys[nKeys-1], self, NSLayoutAttributeRight, 1, 0)];
+    } else {
+        DLog(@"row %d is partial row of %0.1f keys", rowIndex, rowWidth);
+    }
+   
     // add the row of keys array to the keyRows array
     [self.keyRows addObject:keys];
     
@@ -238,9 +234,12 @@ static Key* s_curKey;           // currently touched Key
     
     for (; curCol<keys.count; curCol++) {
         Key* key = keys[curCol];
-        if (CGRectContainsPoint(key.frame, touchPoint)) {
-            touchedKey = key;
-            break;
+        CGRect keyFrame = key.frame;
+        if (touchPoint.x >= keyFrame.origin.x) {
+            if (touchPoint.x < keyFrame.origin.x+keyFrame.size.width) {
+                touchedKey = key;
+                break;
+            }
         }
     }
     
@@ -260,7 +259,7 @@ static Key* s_curKey;           // currently touched Key
 {
     if (event.type == UIEventTypeTouches) {
         s_curKey = [self keyFromTouch:touch];
-        DLog(@"key: %@", s_curKey.title);
+        DLog(@">>> key: %@", s_curKey.name);
         
         [s_curKey sendActionsForControlEvents:UIControlEventTouchDown];
         
@@ -286,7 +285,7 @@ static Key* s_curKey;           // currently touched Key
 - (void)cancelTrackingWithEvent:(UIEvent*)event
 {
     if (event.type == UIEventTypeTouches) {
-        DLog(@"key: %@", s_curKey.title);
+        DLog(@"key: %@", s_curKey.name);
         
         [s_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
         
@@ -298,7 +297,7 @@ static Key* s_curKey;           // currently touched Key
 {
     if (event.type == UIEventTypeTouches) {
         Key* newKey = [self keyFromTouch:touch];
-        DLog(@"key: %@", s_curKey.title);
+        DLog(@"  <<< key: %@", s_curKey.name);
         
         if (newKey != s_curKey) {
             // dragged outside previous key into a new key
@@ -307,11 +306,6 @@ static Key* s_curKey;           // currently touched Key
         }
         
         [newKey sendActionsForControlEvents:UIControlEventTouchUpInside];
-        
-        // if we are shifted (but not locked) then unshift now
-        if (self.shiftState == Shifted) {
-            self.shiftState = Unshifted;
-        }
         
         [UIView animateWithDuration:0.25
                          animations:^{

@@ -21,11 +21,11 @@
 
 @property (nonatomic, strong) UIView* nextKeyboardButton;
 
-@property (nonatomic, strong) UISwipeGestureRecognizer* backspaceGR;
-@property (nonatomic, strong) UISwipeGestureRecognizer* spaceGR;
-@property (nonatomic, strong) UISwipeGestureRecognizer* returnGR;
-@property (nonatomic, strong) UISwipeGestureRecognizer* shiftGR;
-@property (nonatomic, strong) UISwipeGestureRecognizer* shiftLockGR;
+//@property (nonatomic, strong) UISwipeGestureRecognizer* backspaceGR;
+//@property (nonatomic, strong) UISwipeGestureRecognizer* spaceGR;
+//@property (nonatomic, strong) UISwipeGestureRecognizer* returnGR;
+//@property (nonatomic, strong) UISwipeGestureRecognizer* shiftGR;
+//@property (nonatomic, strong) UISwipeGestureRecognizer* shiftLockGR;
 
 @end
 
@@ -34,10 +34,20 @@
 
 const ShiftState nextShiftState[] = {
     /* Unshifted  -> */  Shifted,
-    /* Shifted    -> */  Number_Lock,
-    /* Shift_Lock -> */  Unshifted,
-    /* Number_Lock -> */ Symbol_Lock,
-    /* Symbol_Lock -> */ Number_Lock,
+    /* Shifted    -> */  ShiftLock,
+    /* ShiftLock  -> */  Unshifted,
+    
+    /* NumLock    -> */  Symbols,
+    /* SymLock    -> */  Numbers,
+};
+
+const ShiftState nextNumberState[] = {
+    /* Unshifted  -> */  Numbers,
+    /* Shifted    -> */  Numbers,
+    /* ShiftLock  -> */  Numbers,
+    
+    /* Numbers    -> */  Unshifted,
+    /* SymLock    -> */  Unshifted,
 };
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -81,43 +91,58 @@ const ShiftState nextShiftState[] = {
 {
     [super viewDidLoad];
     
-    NSArray* row1 = @[ [Key key:@"w"],
-                       [Key key:@"e"],
-                       [Key key:@"r"],
-                       [Key key:@"t"],
-                       [Key key:@"y"],
-                       [Key key:@"u"],
-                       [Key key:@"i"],
-                       [Key key:@"o"],
-                       [Key key:@"p"] ];
     
-    NSArray* row2 = @[ [Key key:@"a"],
-                       [Key key:@"s"],
-                       [Key key:@"d"],
-                       [Key key:@"f"],
-                       [Key key:@"g"],
-                       [Key key:@"h"],
-                       [Key key:@"j"],
-                       [Key key:@"k"],
-                       [Key key:@"l"] ];
+    NSArray* row1 = @[
+                      [Key key:@"w" numbers:@"#" symbols:nil],
+                      [Key key:@"e" numbers:@"$" symbols:nil],
+                      [Key key:@"r" numbers:@"%" symbols:nil],
+                      [Key key:@"t" numbers:@"&" symbols:nil],
+                      [Key key:@"y" numbers:@"/" symbols:nil],
+                      [Key key:@"u" numbers:@"7" symbols:nil],
+                      [Key key:@"i" numbers:@"8" symbols:nil],
+                      [Key key:@"o" numbers:@"9" symbols:nil],
+                      [Key key:@"p" numbers:@"-" symbols:nil],
+                      ];
     
-    NSArray* row3 = @[ [Key key:@"⬆︎"],
-                       [Key key:@"z"],
-                       [Key key:@"x"],
-                       [Key key:@"c"],
-                       [Key key:@"v"],
-                       [Key key:@"b"],
-                       [Key key:@"n"],
-                       [Key key:@"m"],
-                       [Key key:@"⬅︎"],
-                       ];
+    NSArray* row2 = @[
+                      [Key key:@"a" numbers:@"(" symbols:nil],
+                      [Key key:@"s" numbers:@")" symbols:nil],
+                      [Key key:@"d" numbers:@"@" symbols:nil],
+                      [Key key:@"f" numbers:@"\"" symbols:nil],
+                      [Key key:@"g" numbers:@"*" symbols:nil],
+                      [Key key:@"h" numbers:@"4" symbols:nil],
+                      [Key key:@"j" numbers:@"5" symbols:nil],
+                      [Key key:@"k" numbers:@"6" symbols:nil],
+                      [Key key:@"l" numbers:@"+" symbols:nil],
+                      ];
+    
+    Key* shiftKey       = [Key key:@"⬆︎" width:1 tag:ShiftKey font:22];
+    Key* backspaceKey   = [Key key:@"⬅︎"  width:1 tag:BackspaceKey font:22];
+
+    NSArray* row3 = @[
+                      shiftKey,
+                      [Key key:@"z" numbers:@"!" symbols:nil],
+                      [Key key:@"x" numbers:@":" symbols:nil],
+                      [Key key:@"c" numbers:@"'" symbols:nil],
+                      [Key key:@"v" numbers:@"=" symbols:nil],
+                      [Key key:@"b" numbers:@"1" symbols:nil],
+                      [Key key:@"n" numbers:@"2" symbols:nil],
+                      [Key key:@"m" numbers:@"3" symbols:nil],
+                      backspaceKey,
+                      ];
+    
+    Key* numbersKey     = [Key key:@"123" width:1.25f tag:NumbersKey   font:17];
+    Key* nextKeyboard   = [Key key:@"🌍"  width:1.25f tag:NextKeyboard font:24];
+    Key* spaceBar       = [Key key:@" "   width:3.00f tag:SpaceBar     font:28];
+    Key* returnKey      = [Key key:@"return" width:1.5f tag:ReturnKey font:17];
     
     NSArray* row4 = @[
-                      [Key key:@"🌍"],
-                      [Key key:@" " width:4],
+                      numbersKey,
+                      nextKeyboard,
+                      spaceBar,
+                      [Key key:@"?" numbers:@"0" symbols:nil],
                       [Key key:@"."],
-                      [Key key:@"?"],
-                      [Key key:@"↵" width:2],
+                      returnKey,
                       ];
     
     [self.keyboardView appendRowOfKeys:row1 target:self action:@selector(keyPressed:)];
@@ -126,34 +151,6 @@ const ShiftState nextShiftState[] = {
     [self.keyboardView appendRowOfKeys:row4 target:self action:@selector(keyPressed:)];
     
     [self.view addSubview:self.keyboardView];
-    
-    // REQUIRED: next keyboard button, we use the first key in the last row
-    Key* nextKeyboardButton = row4[0];
-    nextKeyboardButton.userInteractionEnabled = YES;
-    [nextKeyboardButton removeTarget:nil action:NULL forControlEvents:UIControlEventAllEvents];
-    [nextKeyboardButton addTarget:self action:@selector(advanceToNextInputMode) forControlEvents:UIControlEventTouchUpInside];
-    
-    self.backspaceGR = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(backspaceGesture:)];
-    self.backspaceGR.direction = UISwipeGestureRecognizerDirectionLeft;
-    
-    self.spaceGR     = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(spaceGesture:)];
-    self.spaceGR.direction = UISwipeGestureRecognizerDirectionRight;
-    
-    self.returnGR    = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(returnGesture:)];
-    self.returnGR.direction = UISwipeGestureRecognizerDirectionDown;
-    
-    self.shiftGR     = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(shiftGesture:)];
-    self.shiftGR.direction = UISwipeGestureRecognizerDirectionUp;
-    
-    self.shiftLockGR = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(shiftLockGesture:)];
-    self.shiftLockGR.numberOfTouchesRequired = 2;
-    self.shiftLockGR.direction = UISwipeGestureRecognizerDirectionUp;
-    
-    [self.view addGestureRecognizer:self.backspaceGR];
-    [self.view addGestureRecognizer:self.spaceGR];
-    [self.view addGestureRecognizer:self.returnGR];
-    [self.view addGestureRecognizer:self.shiftGR];
-    [self.view addGestureRecognizer:self.shiftLockGR];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -171,6 +168,8 @@ const ShiftState nextShiftState[] = {
     [self.view addConstraint:self.heightConstraint];
     [self adjustKeyboardViewHeight];
     
+    // provide textDocumentProxy to keyboardView
+    self.keyboardView.textDocumentProxy = self.textDocumentProxy;
 }
 
 // viewWillLayoutSubviews gets called twice at the start of an orientation change
@@ -187,55 +186,36 @@ const ShiftState nextShiftState[] = {
 
 - (void)textDidChange:(id<UITextInput>)textInput {
     // The app has just changed the document's contents, the document context has been updated.
-    
-//    UIColor *textColor = nil;
-//    if (self.textDocumentProxy.keyboardAppearance == UIKeyboardAppearanceDark) {
-//        textColor = [UIColor whiteColor];
-//    } else {
-//        textColor = [UIColor blackColor];
-//    }
 }
 
 - (void)keyPressed:(Key*)sender
 {
-    NSString* title = sender.title;
-    
-    [self.textDocumentProxy insertText:title];
-    
-    if ([title isEqualToString:@"X"]) {
-        dumpView(self.view.window, @"", NO);
-    }
-}
-
-- (void)backspaceGesture:(UISwipeGestureRecognizer*)gr
-{
-    [self.textDocumentProxy deleteBackward];
-}
-
-- (void)spaceGesture:(UISwipeGestureRecognizer*)gr
-{
-    [self.textDocumentProxy insertText:@" "];
-}
-
-- (void)returnGesture:(UISwipeGestureRecognizer*)gr
-{
-    ///[self.textDocumentProxy insertText:@"\r"];
-    
-    NSString* text = [self.textDocumentProxy documentContextBeforeInput];
-    DLog(@"text: \"%@\"", text);
-}
-
-- (void)shiftGesture:(UISwipeGestureRecognizer*)gr
-{
-    self.keyboardView.shiftState = nextShiftState[self.keyboardView.shiftState];
-}
-
-- (void)shiftLockGesture:(UISwipeGestureRecognizer*)gr
-{
-    if (self.keyboardView.shiftState != Shift_Lock) {
-        self.keyboardView.shiftState = Shift_Lock;
-    } else {
-        self.keyboardView.shiftState = Unshifted;
+    switch (sender.tag) {
+        case NextKeyboard:
+            [self advanceToNextInputMode];
+            break;
+        case ShiftKey:
+            self.keyboardView.shiftState = nextShiftState[self.keyboardView.shiftState];
+            break;
+        case NumbersKey:
+            self.keyboardView.shiftState = nextNumberState[self.keyboardView.shiftState];
+            break;
+        case BackspaceKey:
+            [self.textDocumentProxy deleteBackward];
+            break;
+        case SpaceBar:
+            [self.textDocumentProxy insertText:@" "];
+            break;
+        case ReturnKey:
+            [self.textDocumentProxy insertText:@"\r"];
+            break;
+        default:
+            [self.textDocumentProxy insertText:sender.title];
+            
+            // if we are shifted (but not locked) then unshift now
+            if (self.keyboardView.shiftState == Shifted) {
+                self.keyboardView.shiftState = Unshifted;
+            }
     }
 }
 

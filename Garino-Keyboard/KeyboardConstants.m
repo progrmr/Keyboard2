@@ -7,13 +7,14 @@
 //
 
 #import "KeyboardConstants.h"
-
+#import "UIColor+Additions.h"
 
 // Colors
 UIColor* kKeyboardBackgroundColor;
 UIColor* kKeyBackgroundColor;
 UIColor* kKeyFontColor;
 UIColor* kKeyBorderColor;
+UIColor* kSpecialKeyColor;
 
 // Border
 CGFloat kKeyNormalBorderWidth;
@@ -27,7 +28,8 @@ CGFloat kKeySpacerY;
 + (void)initialize
 {
     if (kKeyFontColor == nil) {
-        kKeyboardBackgroundColor    = [UIColor colorWithRed:210/255.0f green:213/255.0f blue:219/255.0f alpha:1];
+        kSpecialKeyColor            = [UIColor colorWithRGB:0xabb3bd];
+        kKeyboardBackgroundColor    = [UIColor colorWithRGB:0xd2d5db];
         kKeyBackgroundColor         = [UIColor colorWithWhite:1.00f alpha:1];
         kKeyFontColor               = [UIColor colorWithWhite:0.00f alpha:1];
         kKeyBorderColor             = [UIColor colorWithWhite:0.00f alpha:1];
