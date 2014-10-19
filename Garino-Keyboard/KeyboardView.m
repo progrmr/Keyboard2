@@ -166,6 +166,7 @@
 #pragma mark -
 #pragma mark Touch Tracking
 static Key* s_curKey;           // currently touched Key
+static CGFloat maxError = 0;
 
 - (void)showCrossHairsForTouchPoint:(CGPoint)touchPoint
                              forKey:(Key*)touchedKey
@@ -191,7 +192,7 @@ static Key* s_curKey;           // currently touched Key
         yError = 0;     // ignore errors off the bottom side of the last row, no row below it
     }
     
-    CGFloat maxError = MAX(fabsf(xError), fabsf(yError));
+    maxError = MAX(fabsf(xError), fabsf(yError));
     
     ///DLog(@"touchPoint: %3.0f %3.0f, err: %0.2f", touchPoint.x, touchPoint.y, maxError);
     
@@ -200,7 +201,7 @@ static Key* s_curKey;           // currently touched Key
     if (maxError > 0.60f) {
         crossHairColor = [UIColor redColor];
     } else {
-        crossHairColor = [UIColor colorWithRed:0 green:1 blue:0 alpha:0.7f];
+        crossHairColor = [UIColor colorWithRed:0 green:0.66f blue:0 alpha:1];
     }
     
     CGFloat crossLineWidth = 1;
@@ -252,6 +253,25 @@ static Key* s_curKey;           // currently touched Key
     return touchedKey;
 }
 
+- (void)updatePreviewText
+{
+    switch ((KeyTags)s_curKey.tag) {
+        case Untagged:
+            self.crossHairView.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
+            break;
+        case SpaceBar:
+            break;
+        case BackspaceKey:
+            self.crossHairView.text = [beforeText substringToIndex:beforeText.length-1];
+            break;
+        case ShiftKey:
+        case NumbersKey:
+        case ReturnKey:
+        case NextKeyboard:
+            break;
+    }
+}
+
 //-----------------------------------------------------------------------
 // touchingStation
 //-----------------------------------------------------------------------
@@ -273,7 +293,7 @@ static NSString* beforeText = nil;
             beforeText = @"";
         }
         
-        self.crossHairView.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
+        [self updatePreviewText];
     }
     return YES;
 }
@@ -288,7 +308,7 @@ static NSString* beforeText = nil;
             [newKey sendActionsForControlEvents:UIControlEventTouchDragEnter];
             s_curKey = newKey;
             
-            self.crossHairView.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
+            [self updatePreviewText];
         }
     }
     return YES;
@@ -315,9 +335,16 @@ static NSString* beforeText = nil;
             // dragged outside previous key into a new key
             [s_curKey sendActionsForControlEvents:UIControlEventTouchDragExit];
             [newKey sendActionsForControlEvents:UIControlEventTouchDragEnter];
+            s_curKey = newKey;
         }
         
-        [newKey sendActionsForControlEvents:UIControlEventTouchUpInside];
+        if (maxError > 0.75f) {
+            // too much error, discard key press
+            [s_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
+            
+        } else {
+            [s_curKey sendActionsForControlEvents:UIControlEventTouchUpInside];
+        }
         
         [UIView animateWithDuration:1.0
                          animations:^{

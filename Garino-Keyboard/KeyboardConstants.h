@@ -17,8 +17,6 @@ enum {
     
     kKeyboardHeightPortrait =   kNumberOfRows * kKeyHeightPortrait,
     kKeyboardHeightLandscape =  kNumberOfRows * kKeyHeightLandscape,
-    
-    kContextOffset =            60,
 };
 
 // Colors

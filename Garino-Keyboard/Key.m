@@ -168,14 +168,15 @@
 
 - (NSString*)name
 {
-    switch (self.tag) {
+    switch ((KeyTags)self.tag) {
         case BackspaceKey:      return @"BackSp";
         case SpaceBar:          return @"SpaceBar";
         case ShiftKey:          return @"Shift";
         case NumbersKey:        return @"Numbers";
         case ReturnKey:         return @"Return";
         case NextKeyboard:      return @"NextKeybd";
-        default:
+            
+        case Untagged:
             if (self.shiftState == Numbers ) {
                 return self.numberTitle;
             } else if (self.shiftState == Symbols) {

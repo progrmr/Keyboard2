@@ -10,14 +10,19 @@
 #import "KeyboardConstants.h"
 #import "UtilitiesUI.h"
 
-enum { kLabelOffset = 50 };
-
 @interface CrosshairsView()
 @property (nonatomic, strong) UILabel* lLabel;
 @property (nonatomic, strong) UILabel* rLabel;
 @end
 
 @implementation CrosshairsView
+
+enum {
+    kPreviewOffset =            75,
+    kPreviewWidth  =            100,
+    kPreviewHeight =            24,
+    kPreviewFontSize =          20,
+};
 
 - (id)init
 {
@@ -32,18 +37,20 @@ enum { kLabelOffset = 50 };
         
         _lLabel = [[UILabel alloc] init];
         _lLabel.backgroundColor   = kKeyBackgroundColor;
-        _lLabel.font              = [UIFont fontWithName:@"Helvetica" size:17];
+        _lLabel.font              = [UIFont fontWithName:@"Helvetica" size:kPreviewFontSize];
         _lLabel.lineBreakMode     = NSLineBreakByTruncatingHead;
+        _lLabel.textAlignment     = NSTextAlignmentCenter;
         _lLabel.layer.borderWidth = _lineWidth;
-        _lLabel.frame = CGRectMake(0,0,100,22);
+        _lLabel.frame = CGRectMake(0,0,kPreviewWidth,kPreviewHeight);
         [self addSubview:_lLabel];
         
         _rLabel = [[UILabel alloc] init];
         _rLabel.backgroundColor   = _lLabel.backgroundColor;
         _rLabel.font              = _lLabel.font;
         _rLabel.lineBreakMode     = _lLabel.lineBreakMode;
+        _lLabel.textAlignment     = _lLabel.textAlignment;
         _rLabel.layer.borderWidth = _lLabel.layer.borderWidth;
-        _rLabel.frame = CGRectMake(0,0,100,22);
+        _rLabel.frame = CGRectMake(0,0,kPreviewWidth,kPreviewHeight);
         [self addSubview:_rLabel];
     }
     return self;
@@ -55,11 +62,11 @@ enum { kLabelOffset = 50 };
     
     CGRect bounds = self.bounds;
     CGRect labelFrame  = _rLabel.frame;
-    labelFrame.origin.x = CGRectGetMidX(bounds) + kLabelOffset;
+    labelFrame.origin.x = CGRectGetMidX(bounds) + kPreviewOffset;
     labelFrame.origin.y = CGRectGetMidY(bounds) - labelFrame.size.height/2;
     _rLabel.frame = labelFrame;
     
-    labelFrame.origin.x = CGRectGetMidX(bounds) - (kLabelOffset+labelFrame.size.width);
+    labelFrame.origin.x = CGRectGetMidX(bounds) - (kPreviewOffset+labelFrame.size.width);
     _lLabel.frame = labelFrame;
 }
 
