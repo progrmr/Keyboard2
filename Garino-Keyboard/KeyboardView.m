@@ -255,6 +255,9 @@ static Key* s_curKey;           // currently touched Key
 //-----------------------------------------------------------------------
 // touchingStation
 //-----------------------------------------------------------------------
+
+static NSString* beforeText = nil;
+
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeTouches) {
@@ -264,6 +267,13 @@ static Key* s_curKey;           // currently touched Key
         [s_curKey sendActionsForControlEvents:UIControlEventTouchDown];
         
         self.crossHairView.alpha = 1;
+        
+        beforeText = [self.textDocumentProxy documentContextBeforeInput];
+        if (!beforeText) {
+            beforeText = @"";
+        }
+        
+        self.crossHairView.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
     }
     return YES;
 }
@@ -277,6 +287,8 @@ static Key* s_curKey;           // currently touched Key
             [s_curKey sendActionsForControlEvents:UIControlEventTouchDragExit];
             [newKey sendActionsForControlEvents:UIControlEventTouchDragEnter];
             s_curKey = newKey;
+            
+            self.crossHairView.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
         }
     }
     return YES;
@@ -307,7 +319,7 @@ static Key* s_curKey;           // currently touched Key
         
         [newKey sendActionsForControlEvents:UIControlEventTouchUpInside];
         
-        [UIView animateWithDuration:0.25
+        [UIView animateWithDuration:1.0
                          animations:^{
                              self.crossHairView.alpha = 0;
                          }];

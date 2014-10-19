@@ -13,7 +13,7 @@
 
 @property (nonatomic, assign)   ShiftState  shiftState;
 
-@property (nonatomic, weak)     NSObject <UITextDocumentProxy> *textDocumentProxy;
+@property (nonatomic, strong)   NSObject <UITextDocumentProxy> *textDocumentProxy;
 
 // adds a row of keys to the keyboard,
 // also sets target/action on each key for TouchUpInside event
