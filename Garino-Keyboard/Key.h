@@ -20,8 +20,14 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 @property (nonatomic, readonly) NSString*   name;       // name for debug purposes, uses tag
 @property (nonatomic, readonly) NSString*   title;      // string that currently appears to user
 @property (nonatomic, readonly) CGFloat     width;      // relative key width, default 1.0
+@property (nonatomic, readonly) BOOL        isAlpha;    // alpha key: A-Z
 
-@property (nonatomic, assign) BOOL          isTouched;
-@property (nonatomic, assign) ShiftState    shiftState;
+@property (nonatomic, assign)   BOOL        isTouched;
+@property (nonatomic, assign)   ShiftState  shiftState;
+
+@property (nonatomic, strong)   NSString*   alphaTitle;
+@property (nonatomic, strong)   NSString*   uppercaseTitle;
+@property (nonatomic, strong)   NSString*   numberTitle;
+@property (nonatomic, strong)   NSString*   symbolTitle;
 
 @end

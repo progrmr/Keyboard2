@@ -9,16 +9,6 @@
 #import "Key.h"
 #import "KeyboardConstants.h"
 
-
-@interface Key ()
-@property (nonatomic, strong) NSString* alphaTitle;
-@property (nonatomic, strong) NSString* uppercaseTitle;
-@property (nonatomic, strong) NSString* numberTitle;
-@property (nonatomic, strong) NSString* symbolTitle;
-@property (nonatomic, assign) BOOL isAlpha;
-@end
-
-
 @implementation Key
 
 - (id)initWithTitle:(NSString*)alpha
@@ -30,31 +20,37 @@
 {
     self = [super init];
     if (self) {
-        _width      = width;
-        _alphaTitle = alpha;
+        self.tag        = tag;
+        _width          = width;
+        
+        _alphaTitle     = alpha;
         if (numbers) {
             _numberTitle = numbers;
         } else {
-            _numberTitle = alpha;
+            _numberTitle = _alphaTitle;
         }
         if (symbols) {
             _symbolTitle = symbols;
         } else {
-            _symbolTitle = alpha;
+            _symbolTitle = _numberTitle;
         }
-        self.tag = tag;
         
         unichar ch = [_alphaTitle characterAtIndex:0];
         _isAlpha = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:ch];
         
-        if (_isAlpha) {
+        if (_isAlpha && tag == Untagged) {
             _uppercaseTitle = [_alphaTitle uppercaseString];
+        } else {
+            _uppercaseTitle = _alphaTitle;
         }
+        
+        DLog(@"Key: %@ %@ %@ %@", _alphaTitle, _uppercaseTitle, _numberTitle, _symbolTitle);
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.userInteractionEnabled = NO;
         self.autoresizesSubviews = YES;
-        self.titleLabel.adjustsFontSizeToFitWidth = NO;
+        self.titleLabel.adjustsFontSizeToFitWidth = YES;
+        self.titleLabel.minimumScaleFactor = 0.5f;
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
         self.titleLabel.font = [UIFont fontWithName:@"Helvetica" size:fontSize];
         
@@ -114,37 +110,59 @@
     return [self titleForState:UIControlStateNormal];
 }
 
+- (void)updateShiftKey
+{
+    if (_isTouched || _shiftState == Shifted) {
+        self.layer.borderWidth = kKeyTouchedBorderWidth;
+    } else if (_shiftState == ShiftLock || _shiftState == Symbols) {
+        self.layer.borderWidth = kKeyTouchedBorderWidth;
+    } else {
+        self.layer.borderWidth = kKeyNormalBorderWidth;
+    }
+}
+
 - (void)setIsTouched:(BOOL)isTouched
 {
     if (_isTouched != isTouched) {
         _isTouched = isTouched;
         
         //DLog(@"%@ key %@", self.name, isTouched ? @"touched" : @"released");
-        
-        self.layer.borderWidth = isTouched ? kKeyTouchedBorderWidth : kKeyNormalBorderWidth;
+        if (self.tag == ShiftKey) {
+            [self updateShiftKey];
+            
+        } else if (isTouched) {
+            self.layer.borderWidth = kKeyTouchedBorderWidth;
+            
+        } else {
+            self.layer.borderWidth = kKeyNormalBorderWidth;
+        }
     }
 }
 
 - (void)setShiftState:(ShiftState)shiftState
 {
-    _shiftState = shiftState;
-    
-    switch (shiftState) {
-        case Unshifted:
-            [self setTitle:self.alphaTitle forState:UIControlStateNormal];
-            break;
-        case Shifted:
-        case ShiftLock:
-            if (self.isAlpha && self.tag == Untagged) {
-                [self setTitle:self.uppercaseTitle forState:UIControlStateNormal];
+    if (_shiftState != shiftState) {
+        _shiftState = shiftState;
+        
+        NSString* newTitle = nil;
+
+        switch (shiftState) {
+            case Unshifted: newTitle = _alphaTitle;      break;
+            case ShiftLock:
+            case Shifted:   newTitle = _uppercaseTitle;  break;
+            case Numbers:   newTitle = _numberTitle;     break;
+            case Symbols:   newTitle = _symbolTitle;     break;
+        }
+
+        if (self.tag == ShiftKey) {
+            [self updateShiftKey];
+            
+            if (shiftState == Shifted) {
+                newTitle = _alphaTitle;
             }
-            break;
-        case Numbers:
-            [self setTitle:self.numberTitle forState:UIControlStateNormal];
-            break;
-        case Symbols:
-            [self setTitle:self.symbolTitle forState:UIControlStateNormal];
-            break;
+        }
+
+        [self setTitle:newTitle forState:UIControlStateNormal];
     }
 }
 
