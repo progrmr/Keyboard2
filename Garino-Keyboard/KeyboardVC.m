@@ -93,55 +93,55 @@ const ShiftState nextNumberState[] = {
     
     
     NSArray* row1 = @[
-                      [Key key:@"w" numbers:@"#" symbols:nil],
-                      [Key key:@"e" numbers:@"$" symbols:nil],
-                      [Key key:@"r" numbers:@"%" symbols:nil],
-                      [Key key:@"t" numbers:@"&" symbols:nil],
-                      [Key key:@"y" numbers:@"/" symbols:nil],
-                      [Key key:@"u" numbers:@"7" symbols:nil],
-                      [Key key:@"i" numbers:@"8" symbols:nil],
-                      [Key key:@"o" numbers:@"9" symbols:nil],
-                      [Key key:@"p" numbers:@"-" symbols:nil],
+                      [Key key:@"w" numbers:@"1" symbols:@"["],
+                      [Key key:@"e" numbers:@"2" symbols:@"]"],
+                      [Key key:@"r" numbers:@"3" symbols:@"{"],
+                      [Key key:@"t" numbers:@"4" symbols:@"}"],
+                      [Key key:@"y" numbers:@"5" symbols:@"#"],
+                      [Key key:@"u" numbers:@"6" symbols:@"%"],
+                      [Key key:@"i" numbers:@"7" symbols:@"^"],
+                      [Key key:@"o" numbers:@"8" symbols:@"*"],
+                      [Key key:@"p" numbers:@"9" symbols:@" "],
                       ];
     
     NSArray* row2 = @[
-                      [Key key:@"a" numbers:@"(" symbols:nil],
-                      [Key key:@"s" numbers:@")" symbols:nil],
-                      [Key key:@"d" numbers:@"@" symbols:nil],
-                      [Key key:@"f" numbers:@"\"" symbols:nil],
-                      [Key key:@"g" numbers:@"*" symbols:nil],
-                      [Key key:@"h" numbers:@"4" symbols:nil],
-                      [Key key:@"j" numbers:@"5" symbols:nil],
-                      [Key key:@"k" numbers:@"6" symbols:nil],
-                      [Key key:@"l" numbers:@"+" symbols:nil],
+                      [Key key:@"a" numbers:@"-" symbols:@"_"],
+                      [Key key:@"s" numbers:@"/" symbols:@"\\"],
+                      [Key key:@"d" numbers:@":" symbols:@"|"],
+                      [Key key:@"f" numbers:@";" symbols:@"~"],
+                      [Key key:@"g" numbers:@"(" symbols:@"<"],
+                      [Key key:@"h" numbers:@")" symbols:@">"],
+                      [Key key:@"j" numbers:@"$" symbols:@"€"],
+                      [Key key:@"k" numbers:@"&" symbols:@"£"],
+                      [Key key:@"l" numbers:@"0" symbols:@"¥"],
                       ];
     
-    Key* shiftKey       = [Key key:@"⬆︎" width:1 tag:ShiftKey font:22];
-    Key* backspaceKey   = [Key key:@"⬅︎"  width:1 tag:BackspaceKey font:22];
+    Key* shiftKey       = [Key key:@"⬆︎" numbers:nil width:1 tag:ShiftKey font:22];
+    Key* backspaceKey   = [Key key:@"⬅︎" numbers:nil width:1 tag:BackspaceKey font:22];
 
     NSArray* row3 = @[
                       shiftKey,
-                      [Key key:@"z" numbers:@"!" symbols:nil],
-                      [Key key:@"x" numbers:@":" symbols:nil],
-                      [Key key:@"c" numbers:@"'" symbols:nil],
-                      [Key key:@"v" numbers:@"=" symbols:nil],
-                      [Key key:@"b" numbers:@"1" symbols:nil],
-                      [Key key:@"n" numbers:@"2" symbols:nil],
-                      [Key key:@"m" numbers:@"3" symbols:nil],
+                      [Key key:@"z" numbers:@"@" symbols:@"•"],
+                      [Key key:@"x" numbers:@"'" symbols:@"`"],
+                      [Key key:@"c" numbers:@"\"" symbols:@"°"],
+                      [Key key:@"v" numbers:@"," symbols:@","],
+                      [Key key:@"b" numbers:@"!" symbols:@"!"],
+                      [Key key:@"n" numbers:@"+" symbols:@"+"],
+                      [Key key:@"m" numbers:@"=" symbols:@"="],
                       backspaceKey,
                       ];
     
-    Key* numbersKey     = [Key key:@"123" width:1.25f tag:NumbersKey   font:17];
-    Key* nextKeyboard   = [Key key:@"🌍"  width:1.25f tag:NextKeyboard font:24];
-    Key* spaceBar       = [Key key:@" "   width:3.00f tag:SpaceBar     font:28];
-    Key* returnKey      = [Key key:@"return" width:1.5f tag:ReturnKey font:17];
+    Key* numbersKey     = [Key key:@"123" numbers:@"abc" width:1.25f tag:NumbersKey   font:17];
+    Key* nextKeyboard   = [Key key:@"🌍"  numbers:nil    width:1.25f tag:NextKeyboard font:24];
+    Key* spaceBar       = [Key key:@" "   numbers:nil    width:3.00f tag:SpaceBar     font:28];
+    Key* returnKey      = [Key key:@"return" numbers:nil width:1.5f tag:ReturnKey font:17];
     
     NSArray* row4 = @[
                       numbersKey,
                       nextKeyboard,
                       spaceBar,
-                      [Key key:@"?" numbers:@"0" symbols:nil],
-                      [Key key:@"."],
+                      [Key key:@"?" numbers:@"?" symbols:@"?"],
+                      [Key key:@"." numbers:@"." symbols:@"."],
                       returnKey,
                       ];
     

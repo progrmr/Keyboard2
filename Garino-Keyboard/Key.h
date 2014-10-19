@@ -15,7 +15,7 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 
 + (instancetype)key:(NSString*)title;
 + (instancetype)key:(NSString*)title numbers:(NSString*)numbers symbols:(NSString*)symbols;
-+ (instancetype)key:(NSString*)title width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
++ (instancetype)key:(NSString*)title numbers:(NSString*)numbers width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
 
 @property (nonatomic, readonly) NSString*   name;       // name for debug purposes, uses tag
 @property (nonatomic, readonly) NSString*   title;      // string that currently appears to user

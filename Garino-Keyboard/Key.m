@@ -96,9 +96,9 @@
     return [[Key alloc] initWithTitle:title numbers:numbers symbols:symbols width:1 tag:0 font:28];
 }
 
-+ (instancetype)key:(NSString*)title width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
++ (instancetype)key:(NSString*)title numbers:(NSString*)numbers width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
 {
-    return [[Key alloc] initWithTitle:title numbers:nil symbols:nil width:width tag:tag font:fontSize];
+    return [[Key alloc] initWithTitle:title numbers:numbers symbols:nil width:width tag:tag font:fontSize];
 }
 
 - (void)layoutSubviews
