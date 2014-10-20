@@ -13,6 +13,7 @@
 #import "NSLayoutConstraint+Additions.h"
 
 @interface KeyboardView ()
+@property (nonatomic, strong) UILabel*        previewLabel;
 @property (nonatomic, strong) NSMutableArray* keyRows;      // array of array of Key
 @property (nonatomic, assign) CGFloat         keyHeight;
 @property (nonatomic, assign) CGFloat         keyWidth;
@@ -29,7 +30,13 @@
         _shiftState = Unshifted;
         _keyRows    = [NSMutableArray arrayWithCapacity:kNumberOfRows];
         _keyHeights = [NSMutableArray arrayWithCapacity:kNumberOfKeysPerRow * kNumberOfRows];
-        _keyHeight  = kKeyboardHeightPortrait;
+        _keyHeight  = kKeyHeightPortrait;
+        
+        _previewLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,kPreviewHeight)];
+        _previewLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+        _previewLabel.textAlignment = NSTextAlignmentCenter;
+        _previewLabel.font = [UIFont fontWithName:kKeyboardFont size:kPreviewFontSize];
+        [self addSubview:_previewLabel];
         
         _crossHairView = [[CrosshairsView alloc] init];
         _crossHairView.autoresizingMask = 0;        // manually resized in layoutSubviews
@@ -100,7 +107,7 @@
     if (oldFrame.size.height != frame.size.height) {
         DLog(@"%@", NSStringFromCGRect(frame));
         
-        const CGFloat keyboardHeight = frame.size.height;
+        const CGFloat keyboardHeight = frame.size.height - kPreviewHeight;
         const CGFloat spaceBetweenRows = kKeySpacerY * (kNumberOfRows-1);
         self.keyHeight = (keyboardHeight - spaceBetweenRows) / kNumberOfRows;
         
@@ -114,8 +121,8 @@
     const NSUInteger rowIndex = self.keyRows.count;
     const NSUInteger nKeys = keys.count;
     const BOOL firstRow = (rowIndex == 0);
-    const NSLayoutAttribute belowAttr = firstRow ? NSLayoutAttributeTop : NSLayoutAttributeBottom;
-    UIView* belowView = firstRow ? self : self.keyRows[rowIndex-1][0];
+    const NSLayoutAttribute belowAttr = /* firstRow ? NSLayoutAttributeTop : */ NSLayoutAttributeBottom;
+    UIView* belowView = firstRow ? self.previewLabel : self.keyRows[rowIndex-1][0];
     CGFloat rowWidth = 0;
     
     for (NSUInteger keyIndex=0; keyIndex<nKeys; keyIndex++) {
@@ -224,7 +231,9 @@ static CGFloat maxError = 0;
 {
     const CGPoint touchPoint  = [touch locationInView:self];
 
-    NSUInteger curRow = (NSUInteger) ((touchPoint.y / self.bounds.size.height) * kNumberOfRows);
+    const CGFloat touchOffset = touchPoint.y - kPreviewHeight;
+    const CGFloat keyRowsHeight = self.bounds.size.height - kPreviewHeight;
+    NSUInteger curRow = (NSUInteger) ((touchOffset / keyRowsHeight) * kNumberOfRows);
     if (curRow >= self.keyRows.count) {
         curRow = self.keyRows.count - 1;
     }
@@ -257,12 +266,16 @@ static CGFloat maxError = 0;
 {
     switch ((KeyTags)s_curKey.tag) {
         case Untagged:
-            self.crossHairView.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
+            self.previewLabel.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
             break;
         case SpaceBar:
             break;
         case BackspaceKey:
-            self.crossHairView.text = [beforeText substringToIndex:beforeText.length-1];
+            if (beforeText.length) {
+                self.previewLabel.text = [beforeText substringToIndex:beforeText.length-1];
+            } else {
+                self.previewLabel.text = @"";
+            }
             break;
         case ShiftKey:
         case NumbersKey:

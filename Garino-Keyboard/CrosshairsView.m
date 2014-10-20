@@ -10,19 +10,7 @@
 #import "KeyboardConstants.h"
 #import "UtilitiesUI.h"
 
-@interface CrosshairsView()
-@property (nonatomic, strong) UILabel* lLabel;
-@property (nonatomic, strong) UILabel* rLabel;
-@end
-
 @implementation CrosshairsView
-
-enum {
-    kPreviewOffset =            75,
-    kPreviewWidth  =            100,
-    kPreviewHeight =            24,
-    kPreviewFontSize =          20,
-};
 
 - (id)init
 {
@@ -34,40 +22,8 @@ enum {
         
         _crossColor = [UIColor blackColor];
         _lineWidth  = 1.0f;
-        
-        _lLabel = [[UILabel alloc] init];
-        _lLabel.backgroundColor   = kKeyBackgroundColor;
-        _lLabel.font              = [UIFont fontWithName:@"Helvetica" size:kPreviewFontSize];
-        _lLabel.lineBreakMode     = NSLineBreakByTruncatingHead;
-        _lLabel.textAlignment     = NSTextAlignmentCenter;
-        _lLabel.layer.borderWidth = _lineWidth;
-        _lLabel.frame = CGRectMake(0,0,kPreviewWidth,kPreviewHeight);
-        [self addSubview:_lLabel];
-        
-        _rLabel = [[UILabel alloc] init];
-        _rLabel.backgroundColor   = _lLabel.backgroundColor;
-        _rLabel.font              = _lLabel.font;
-        _rLabel.lineBreakMode     = _lLabel.lineBreakMode;
-        _lLabel.textAlignment     = _lLabel.textAlignment;
-        _rLabel.layer.borderWidth = _lLabel.layer.borderWidth;
-        _rLabel.frame = CGRectMake(0,0,kPreviewWidth,kPreviewHeight);
-        [self addSubview:_rLabel];
     }
     return self;
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    
-    CGRect bounds = self.bounds;
-    CGRect labelFrame  = _rLabel.frame;
-    labelFrame.origin.x = CGRectGetMidX(bounds) + kPreviewOffset;
-    labelFrame.origin.y = CGRectGetMidY(bounds) - labelFrame.size.height/2;
-    _rLabel.frame = labelFrame;
-    
-    labelFrame.origin.x = CGRectGetMidX(bounds) - (kPreviewOffset+labelFrame.size.width);
-    _lLabel.frame = labelFrame;
 }
 
 - (void)setFrame:(CGRect)frame
@@ -82,23 +38,9 @@ enum {
     [self setNeedsDisplay];
 }
 
-- (void)setText:(NSString *)text
-{
-    _rLabel.text = text;
-    _lLabel.text = text;
-}
-
-- (NSString*)text
-{
-    return _rLabel.text;
-}
-
 - (void)setCrossColor:(UIColor *)newColor
 {
-	_crossColor = newColor;
-    _rLabel.layer.borderColor = newColor.CGColor;
-    _lLabel.layer.borderColor = newColor.CGColor;
-    
+	_crossColor = newColor;    
 	[self setNeedsDisplay];		// new crosshairs color, needs redrawing
 }
 

@@ -9,14 +9,19 @@
 #import <UIKit/UIKit.h>
 
 enum {
+    kPreviewOffset =            75,
+    kPreviewWidth  =            100,
+    kPreviewHeight =            30,
+    kPreviewFontSize =          24,
+    
     kNumberOfRows =             4,
     kNumberOfKeysPerRow =       9,
     
-    kKeyHeightPortrait =        53,
+    kKeyHeightPortrait =        44,
     kKeyHeightLandscape =       38,
     
-    kKeyboardHeightPortrait =   kNumberOfRows * kKeyHeightPortrait,
-    kKeyboardHeightLandscape =  kNumberOfRows * kKeyHeightLandscape,
+    kKeyboardHeightPortrait =   (kNumberOfRows * kKeyHeightPortrait) + kPreviewHeight,
+    kKeyboardHeightLandscape =  (kNumberOfRows * kKeyHeightLandscape) + kPreviewHeight,
 };
 
 // Colors
@@ -33,6 +38,8 @@ extern CGFloat kKeyTouchedBorderWidth;
 // Spacing
 extern CGFloat kKeySpacerY;
 
+// Font
+extern NSString* kKeyboardFont;
 
 @interface KeyboardConstants : NSObject
 

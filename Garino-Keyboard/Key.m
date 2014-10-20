@@ -52,7 +52,7 @@
         self.titleLabel.adjustsFontSizeToFitWidth = YES;
         self.titleLabel.minimumScaleFactor = 0.5f;
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
-        self.titleLabel.font = [UIFont fontWithName:@"Helvetica" size:fontSize];
+        self.titleLabel.font = [UIFont fontWithName:kKeyboardFont size:fontSize];
         
         if (tag == Untagged || tag == SpaceBar) {
             self.backgroundColor = kKeyBackgroundColor;

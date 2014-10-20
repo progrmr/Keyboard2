@@ -23,6 +23,9 @@ CGFloat kKeyTouchedBorderWidth;
 // Spacing
 CGFloat kKeySpacerY;
 
+// Font
+NSString* kKeyboardFont;
+
 @implementation KeyboardConstants
 
 + (void)initialize
@@ -37,7 +40,9 @@ CGFloat kKeySpacerY;
         kKeyNormalBorderWidth       = 0.5f;
         kKeyTouchedBorderWidth      = 2.0f;
         
-        kKeySpacerY                 = -5.0f;        
+        kKeySpacerY                 = -5.0f;
+        
+        kKeyboardFont               = @"Helvetica";
     }
 }
 
