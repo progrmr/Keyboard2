@@ -22,6 +22,7 @@
 		8EDDBEE219EC247600AD2D49 /* KeyboardConstants.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */; };
 		8EDDBEE519EC30B300AD2D49 /* KeyboardView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */; };
 		8EE3692119F3042F007AEA20 /* UIColor+Additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EE3692019F3042F007AEA20 /* UIColor+Additions.m */; };
+		8EE397CA19F682CB006FA623 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8EE397C919F682CB006FA623 /* AudioToolbox.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -91,6 +92,7 @@
 		8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardView.m; sourceTree = "<group>"; };
 		8EE3691F19F3042F007AEA20 /* UIColor+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Additions.h"; path = "../../SDK_Utilities.repo/UI_Categories/UIColor+Additions.h"; sourceTree = "<group>"; };
 		8EE3692019F3042F007AEA20 /* UIColor+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Additions.m"; path = "../../SDK_Utilities.repo/UI_Categories/UIColor+Additions.m"; sourceTree = "<group>"; };
+		8EE397C919F682CB006FA623 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8EF92A2419ED477600D53AE2 /* Keyboard-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Keyboard-Prefix.pch"; sourceTree = "<group>"; };
 		8EF92A2619ED4B8300D53AE2 /* Keyboard2.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Keyboard2.entitlements; sourceTree = "<group>"; };
 		8EF92A2719ED4D3B00D53AE2 /* Garino-Keyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = "Garino-Keyboard.entitlements"; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EE397CA19F682CB006FA623 /* AudioToolbox.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +130,7 @@
 				8E74956819DA65AD00B9EC9B /* Keyboard2 */,
 				8E74959419DA65EE00B9EC9B /* Garino-Keyboard */,
 				8EF92A2319ED473000D53AE2 /* Utilities */,
+				8EE397C919F682CB006FA623 /* AudioToolbox.framework */,
 				8E74956719DA65AD00B9EC9B /* Products */,
 			);
 			sourceTree = "<group>";

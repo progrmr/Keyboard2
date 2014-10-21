@@ -28,14 +28,26 @@
 
 - (void)setFrame:(CGRect)frame
 {
+    CGSize oldSize = self.frame.size;
+    
     [super setFrame:frame];
-    [self setNeedsDisplay];
+    
+    if (!CGSizeEqualToSize(oldSize, frame.size)) {
+        // drawRect needs to be called for the new size
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setBounds:(CGRect)bounds
 {
+    CGSize oldSize = self.frame.size;
+    
     [super setBounds:bounds];
-    [self setNeedsDisplay];
+    
+    if (!CGSizeEqualToSize(oldSize, bounds.size)) {
+        // drawRect needs to be called for the new size
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)setCrossColor:(UIColor *)newColor

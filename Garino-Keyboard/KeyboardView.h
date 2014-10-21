@@ -19,4 +19,6 @@
 // also sets target/action on each key for TouchUpInside event
 - (void)appendRowOfKeys:(NSArray *)keys target:(id)target action:(SEL)action;
 
+- (void)updatePreviewText;
+
 @end

@@ -11,8 +11,9 @@
 enum {
     kPreviewOffset =            75,
     kPreviewWidth  =            100,
-    kPreviewHeight =            30,
-    kPreviewFontSize =          24,
+    kPreviewHeight =            40,
+    
+    kKeyboardFontSize =         28,
     
     kNumberOfRows =             4,
     kNumberOfKeysPerRow =       9,
@@ -39,7 +40,7 @@ extern CGFloat kKeyTouchedBorderWidth;
 extern CGFloat kKeySpacerY;
 
 // Font
-extern NSString* kKeyboardFont;
+extern NSString* kKeyboardFontName;
 
 @interface KeyboardConstants : NSObject
 

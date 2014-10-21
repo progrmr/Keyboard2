@@ -121,7 +121,7 @@ const ShiftState nextNumberState[] = {
     shiftKey.uppercaseTitle = @"⇪";
     shiftKey.symbolTitle    = @"123";
     
-    Key* zqxKey = [Key key:@"zqx" numbers:@"@" width:1.25f tag:0 font:28];
+    Key* zqxKey = [Key key:@"qzx" numbers:@"@" width:1.25f tag:0 font:kKeyboardFontSize];
     zqxKey.symbolTitle = @"•";
     
     NSArray* row3 = @[
@@ -138,7 +138,7 @@ const ShiftState nextNumberState[] = {
     
     Key* numbersKey     = [Key key:@"123" numbers:@"abc" width:1.25f tag:NumbersKey   font:17];
     Key* nextKeyboard   = [Key key:@"🌍"  numbers:nil    width:1.25f tag:NextKeyboard font:24];
-    Key* spaceBar       = [Key key:@" "   numbers:nil    width:3.50f tag:SpaceBar     font:28];
+    Key* spaceBar       = [Key key:@" "   numbers:nil    width:3.50f tag:SpaceBar     font:kKeyboardFontSize];
     Key* returnKey      = [Key key:@"return" numbers:nil width:2.00f tag:ReturnKey    font:17];
     
     NSArray* row4 = @[
@@ -174,6 +174,7 @@ const ShiftState nextNumberState[] = {
     
     // provide textDocumentProxy to keyboardView
     self.keyboardView.textDocumentProxy = self.textDocumentProxy;
+    [self.keyboardView updatePreviewText];
 }
 
 // viewWillLayoutSubviews gets called twice at the start of an orientation change
@@ -194,7 +195,7 @@ const ShiftState nextNumberState[] = {
 
 - (void)keyPressed:(Key*)sender
 {
-    switch (sender.tag) {
+    switch ((KeyTags)sender.tag) {
         case NextKeyboard:
             [self advanceToNextInputMode];
             break;
@@ -206,15 +207,19 @@ const ShiftState nextNumberState[] = {
             break;
         case BackspaceKey:
             [self.textDocumentProxy deleteBackward];
+            [self.keyboardView updatePreviewText];
             break;
         case SpaceBar:
             [self.textDocumentProxy insertText:@" "];
+            [self.keyboardView updatePreviewText];
             break;
         case ReturnKey:
             [self.textDocumentProxy insertText:@"\r"];
+            [self.keyboardView updatePreviewText];
             break;
-        default:
+        case Untagged:
             [self.textDocumentProxy insertText:sender.title];
+            [self.keyboardView updatePreviewText];
             
             // if we are shifted (but not locked) then unshift now
             if (self.keyboardView.shiftState == Shifted) {

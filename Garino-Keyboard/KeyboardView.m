@@ -11,9 +11,11 @@
 #import "Key.h"
 #import "CrosshairsView.h"
 #import "NSLayoutConstraint+Additions.h"
+#import <AudioToolbox/AudioServices.h>
 
 @interface KeyboardView ()
-@property (nonatomic, strong) UILabel*        previewLabel;
+@property (nonatomic, strong) UILabel*        beforeLabel;
+@property (nonatomic, strong) UILabel*        afterLabel;
 @property (nonatomic, strong) NSMutableArray* keyRows;      // array of array of Key
 @property (nonatomic, assign) CGFloat         keyHeight;
 @property (nonatomic, assign) CGFloat         keyWidth;
@@ -32,11 +34,17 @@
         _keyHeights = [NSMutableArray arrayWithCapacity:kNumberOfKeysPerRow * kNumberOfRows];
         _keyHeight  = kKeyHeightPortrait;
         
-        _previewLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,kPreviewHeight)];
-        _previewLabel.autoresizingMask = UIViewAutoresizingFlexibleWidth;
-        _previewLabel.textAlignment = NSTextAlignmentCenter;
-        _previewLabel.font = [UIFont fontWithName:kKeyboardFont size:kPreviewFontSize];
-        [self addSubview:_previewLabel];
+        _beforeLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,kPreviewHeight)];
+        _beforeLabel.textAlignment = NSTextAlignmentRight;
+        _beforeLabel.lineBreakMode = NSLineBreakByClipping;
+        _beforeLabel.font = [UIFont fontWithName:kKeyboardFontName size:kKeyboardFontSize];
+        [self addSubview:_beforeLabel];
+        
+        _afterLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,kPreviewHeight)];
+        _afterLabel.textAlignment = NSTextAlignmentLeft;
+        _afterLabel.lineBreakMode = NSLineBreakByClipping;
+        _afterLabel.font = [UIFont fontWithName:kKeyboardFontName size:kKeyboardFontSize];
+        [self addSubview:_afterLabel];
         
         _crossHairView = [[CrosshairsView alloc] init];
         _crossHairView.autoresizingMask = 0;        // manually resized in layoutSubviews
@@ -55,8 +63,17 @@
     [super layoutSubviews];
     
     CGRect bounds = self.bounds;
-    bounds = CGRectInset(bounds, -bounds.size.width/2, -bounds.size.height/2);
-    self.crossHairView.frame = bounds;
+    
+    self.crossHairView.frame = CGRectInset(bounds, -bounds.size.width/2, -bounds.size.height/2);
+    
+    CGRect beforeFrame = self.beforeLabel.frame;
+    beforeFrame.size.width = bounds.size.width / 2;
+    self.beforeLabel.frame = beforeFrame;
+    
+    CGRect afterFrame = self.afterLabel.frame;
+    afterFrame.size.width = beforeFrame.size.width;
+    afterFrame.origin.x = CGRectGetMaxX(beforeFrame);
+    self.afterLabel.frame = afterFrame;
 }
 
 - (void)setShiftState:(ShiftState)shiftState
@@ -122,7 +139,7 @@
     const NSUInteger nKeys = keys.count;
     const BOOL firstRow = (rowIndex == 0);
     const NSLayoutAttribute belowAttr = /* firstRow ? NSLayoutAttributeTop : */ NSLayoutAttributeBottom;
-    UIView* belowView = firstRow ? self.previewLabel : self.keyRows[rowIndex-1][0];
+    UIView* belowView = firstRow ? _beforeLabel : self.keyRows[rowIndex-1][0];
     CGFloat rowWidth = 0;
     
     for (NSUInteger keyIndex=0; keyIndex<nKeys; keyIndex++) {
@@ -264,32 +281,48 @@ static CGFloat maxError = 0;
 
 - (void)updatePreviewText
 {
-    switch ((KeyTags)s_curKey.tag) {
-        case Untagged:
-            self.previewLabel.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
-            break;
-        case SpaceBar:
-            break;
-        case BackspaceKey:
-            if (beforeText.length) {
-                self.previewLabel.text = [beforeText substringToIndex:beforeText.length-1];
-            } else {
-                self.previewLabel.text = @"";
-            }
-            break;
-        case ShiftKey:
-        case NumbersKey:
-        case ReturnKey:
-        case NextKeyboard:
-            break;
+    beforeText = [self.textDocumentProxy documentContextBeforeInput];
+    if (!beforeText) {
+        beforeText = @"";
+    }
+    afterText = [self.textDocumentProxy documentContextAfterInput];
+    if (!afterText) {
+        afterText = @"";
+    }
+    
+    if (s_curKey == nil) {
+        self.beforeLabel.text = beforeText;
+        self.afterLabel.text  = afterText;
+        
+    } else {
+        switch ((KeyTags)s_curKey.tag) {
+            case Untagged:
+                self.beforeLabel.text = [NSString stringWithFormat:@"%@%@", beforeText, s_curKey.title];
+                break;
+            case SpaceBar:
+                break;
+            case BackspaceKey:
+                if (beforeText.length) {
+                    self.beforeLabel.text = [beforeText substringToIndex:beforeText.length-1];
+                } else {
+                    self.beforeLabel.text = @"";
+                }
+                break;
+            case ShiftKey:
+            case NumbersKey:
+            case ReturnKey:
+            case NextKeyboard:
+                break;
+        }
     }
 }
 
 //-----------------------------------------------------------------------
-// touchingStation
+// touch tracking
 //-----------------------------------------------------------------------
 
 static NSString* beforeText = nil;
+static NSString* afterText = nil;
 
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
@@ -300,11 +333,6 @@ static NSString* beforeText = nil;
         [s_curKey sendActionsForControlEvents:UIControlEventTouchDown];
         
         self.crossHairView.alpha = 1;
-        
-        beforeText = [self.textDocumentProxy documentContextBeforeInput];
-        if (!beforeText) {
-            beforeText = @"";
-        }
         
         [self updatePreviewText];
     }
@@ -335,6 +363,8 @@ static NSString* beforeText = nil;
         [s_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
         
         self.crossHairView.alpha = 0;
+        s_curKey = nil;
+        [self updatePreviewText];
     }
 }
 
@@ -354,12 +384,16 @@ static NSString* beforeText = nil;
         if (maxError > 0.75f) {
             // too much error, discard key press
             [s_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
             
         } else {
             [s_curKey sendActionsForControlEvents:UIControlEventTouchUpInside];
         }
         
-        [UIView animateWithDuration:1.0
+        s_curKey = nil;
+        [self updatePreviewText];
+        
+        [UIView animateWithDuration:0.5
                          animations:^{
                              self.crossHairView.alpha = 0;
                          }];

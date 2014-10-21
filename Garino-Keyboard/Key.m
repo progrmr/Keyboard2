@@ -52,7 +52,7 @@
         self.titleLabel.adjustsFontSizeToFitWidth = YES;
         self.titleLabel.minimumScaleFactor = 0.5f;
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
-        self.titleLabel.font = [UIFont fontWithName:kKeyboardFont size:fontSize];
+        self.titleLabel.font = [UIFont fontWithName:kKeyboardFontName size:fontSize];
         
         if (tag == Untagged || tag == SpaceBar) {
             self.backgroundColor = kKeyBackgroundColor;
@@ -84,12 +84,12 @@
 
 + (instancetype)key:(NSString *)title
 {
-    return [[Key alloc] initWithTitle:title numbers:nil symbols:nil width:1 tag:0 font:28];
+    return [[Key alloc] initWithTitle:title numbers:nil symbols:nil width:1 tag:0 font:kKeyboardFontSize];
 }
 
 + (instancetype)key:(NSString *)title numbers:(NSString*)numbers symbols:(NSString *)symbols
 {
-    return [[Key alloc] initWithTitle:title numbers:numbers symbols:symbols width:1 tag:0 font:28];
+    return [[Key alloc] initWithTitle:title numbers:numbers symbols:symbols width:1 tag:0 font:kKeyboardFontSize];
 }
 
 + (instancetype)key:(NSString*)title numbers:(NSString*)numbers width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
@@ -177,12 +177,12 @@
         case NextKeyboard:      return @"NextKeybd";
             
         case Untagged:
-            if (self.shiftState == Numbers ) {
-                return self.numberTitle;
-            } else if (self.shiftState == Symbols) {
-                return self.symbolTitle;
-            } else {
-                return self.title;
+            switch (self.shiftState) {
+                case Unshifted: return self.alphaTitle;
+                case Shifted:
+                case ShiftLock: return self.uppercaseTitle;
+                case Numbers:   return self.numberTitle;
+                case Symbols:   return self.symbolTitle;
             }
     }
 }
