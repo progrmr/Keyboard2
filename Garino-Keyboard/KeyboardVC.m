@@ -187,10 +187,22 @@ const ShiftState nextNumberState[] = {
 
 - (void)textWillChange:(id<UITextInput>)textInput {
     // The app is about to change the document's contents. Perform any preparation here.
+    DLog(@"");
 }
 
 - (void)textDidChange:(id<UITextInput>)textInput {
     // The app has just changed the document's contents, the document context has been updated.
+    DLog(@"");
+}
+
+- (void)selectionWillChange:(id<UITextInput>)textInput
+{
+    DLog(@"");
+}
+
+- (void)selectionDidChange:(id<UITextInput>)textInput
+{
+    DLog(@"");
 }
 
 - (void)keyPressed:(Key*)sender

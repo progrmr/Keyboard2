@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  RootVC.h
 //  Keyboard2
 //
 //  Created by Gary Morris on 9/29/14.
@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ViewController : UIViewController
-
+@interface RootVC : UIViewController
 
 @end
 

@@ -11,10 +11,8 @@
 		8E3C374319E9CF56009DD1A6 /* Key.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3C374219E9CF56009DD1A6 /* Key.m */; };
 		8E74956C19DA65AD00B9EC9B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74956B19DA65AD00B9EC9B /* main.m */; };
 		8E74956F19DA65AD00B9EC9B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74956E19DA65AD00B9EC9B /* AppDelegate.m */; };
-		8E74957219DA65AD00B9EC9B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74957119DA65AD00B9EC9B /* ViewController.m */; };
-		8E74957519DA65AD00B9EC9B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E74957319DA65AD00B9EC9B /* Main.storyboard */; };
+		8E74957219DA65AD00B9EC9B /* RootVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74957119DA65AD00B9EC9B /* RootVC.m */; };
 		8E74957719DA65AD00B9EC9B /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E74957619DA65AD00B9EC9B /* Images.xcassets */; };
-		8E74957A19DA65AD00B9EC9B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E74957819DA65AD00B9EC9B /* LaunchScreen.xib */; };
 		8E74959919DA65EE00B9EC9B /* KeyboardVC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E74959819DA65EE00B9EC9B /* KeyboardVC.m */; };
 		8E74959C19DA65EE00B9EC9B /* Garino-Keyboard.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		8E7495D319DA72DC00B9EC9B /* UtilitiesUI.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */; };
@@ -73,11 +71,9 @@
 		8E74956B19DA65AD00B9EC9B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8E74956D19DA65AD00B9EC9B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8E74956E19DA65AD00B9EC9B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		8E74957019DA65AD00B9EC9B /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		8E74957119DA65AD00B9EC9B /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		8E74957419DA65AD00B9EC9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		8E74957019DA65AD00B9EC9B /* RootVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootVC.h; sourceTree = "<group>"; };
+		8E74957119DA65AD00B9EC9B /* RootVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootVC.m; sourceTree = "<group>"; };
 		8E74957619DA65AD00B9EC9B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8E74957919DA65AD00B9EC9B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		8E74957F19DA65AD00B9EC9B /* Keyboard2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Keyboard2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Garino-Keyboard.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E74959619DA65EE00B9EC9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -151,11 +147,9 @@
 				8EF92A2619ED4B8300D53AE2 /* Keyboard2.entitlements */,
 				8E74956D19DA65AD00B9EC9B /* AppDelegate.h */,
 				8E74956E19DA65AD00B9EC9B /* AppDelegate.m */,
-				8E74957019DA65AD00B9EC9B /* ViewController.h */,
-				8E74957119DA65AD00B9EC9B /* ViewController.m */,
-				8E74957319DA65AD00B9EC9B /* Main.storyboard */,
+				8E74957019DA65AD00B9EC9B /* RootVC.h */,
+				8E74957119DA65AD00B9EC9B /* RootVC.m */,
 				8E74957619DA65AD00B9EC9B /* Images.xcassets */,
-				8E74957819DA65AD00B9EC9B /* LaunchScreen.xib */,
 				8E74956919DA65AD00B9EC9B /* Supporting Files */,
 			);
 			path = Keyboard2;
@@ -326,8 +320,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E74957519DA65AD00B9EC9B /* Main.storyboard in Resources */,
-				8E74957A19DA65AD00B9EC9B /* LaunchScreen.xib in Resources */,
 				8E74957719DA65AD00B9EC9B /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -353,7 +345,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E74957219DA65AD00B9EC9B /* ViewController.m in Sources */,
+				8E74957219DA65AD00B9EC9B /* RootVC.m in Sources */,
 				8E74956F19DA65AD00B9EC9B /* AppDelegate.m in Sources */,
 				8E7495D319DA72DC00B9EC9B /* UtilitiesUI.m in Sources */,
 				8E74956C19DA65AD00B9EC9B /* main.m in Sources */,
@@ -400,25 +392,6 @@
 			targetProxy = 8E74959D19DA65EE00B9EC9B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		8E74957319DA65AD00B9EC9B /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8E74957419DA65AD00B9EC9B /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
-		8E74957819DA65AD00B9EC9B /* LaunchScreen.xib */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8E74957919DA65AD00B9EC9B /* Base */,
-			);
-			name = LaunchScreen.xib;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		8E74958719DA65AD00B9EC9B /* Debug */ = {
