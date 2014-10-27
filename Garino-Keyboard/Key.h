@@ -14,8 +14,9 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 @interface Key : UIButton
 
 + (instancetype)key:(NSString*)title;
-+ (instancetype)key:(NSString*)title numbers:(NSString*)numbers symbols:(NSString*)symbols;
-+ (instancetype)key:(NSString*)title numbers:(NSString*)numbers width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
++ (instancetype)key:(NSString*)title number:(NSString*)number symbol:(NSString*)symbol;
++ (instancetype)key:(NSString*)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
++ (instancetype)key:(NSString*)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
 
 @property (nonatomic, readonly) NSString*   name;       // name for debug purposes, uses tag
 @property (nonatomic, readonly) NSString*   title;      // string that currently appears to user
@@ -25,9 +26,9 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 @property (nonatomic, assign)   BOOL        isTouched;
 @property (nonatomic, assign)   ShiftState  shiftState;
 
-@property (nonatomic, strong)   NSString*   alphaTitle;
-@property (nonatomic, strong)   NSString*   uppercaseTitle;
-@property (nonatomic, strong)   NSString*   numberTitle;
-@property (nonatomic, strong)   NSString*   symbolTitle;
+@property (nonatomic, readonly)   NSString*   alphaTitle;
+@property (nonatomic, readonly)   NSString*   uppercaseTitle;
+@property (nonatomic, readonly)   NSString*   numberTitle;
+@property (nonatomic, readonly)   NSString*   symbolTitle;
 
 @end

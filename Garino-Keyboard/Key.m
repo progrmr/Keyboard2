@@ -12,8 +12,9 @@
 @implementation Key
 
 - (id)initWithTitle:(NSString*)alpha
-            numbers:(NSString*)numbers
-            symbols:(NSString*)symbols
+              upper:(NSString*)upper
+             number:(NSString*)number
+             symbol:(NSString*)symbol
               width:(CGFloat)width
                 tag:(KeyTags)tag
                font:(CGFloat)fontSize
@@ -24,24 +25,34 @@
         _width          = width;
         
         _alphaTitle     = alpha;
-        if (numbers) {
-            _numberTitle = numbers;
+        
+        if (number) {
+            _numberTitle = number;
         } else {
             _numberTitle = _alphaTitle;
         }
-        if (symbols) {
-            _symbolTitle = symbols;
+        
+        if (symbol) {
+            _symbolTitle = symbol;
         } else {
             _symbolTitle = _numberTitle;
         }
         
-        unichar ch = [_alphaTitle characterAtIndex:0];
-        _isAlpha = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:ch];
-        
-        if (_isAlpha && tag == Untagged) {
-            _uppercaseTitle = [_alphaTitle uppercaseString];
-        } else {
+        if (upper) {
+            _uppercaseTitle = upper;
+        } else if (tag != Untagged) {
+            // special key, use lowercase title
             _uppercaseTitle = _alphaTitle;
+        } else {
+            // no uppercase provided, convert lowercase if alphabetic key
+            unichar ch = [_alphaTitle characterAtIndex:0];
+            _isAlpha = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:ch];
+            
+            if (_isAlpha) {
+                _uppercaseTitle = [_alphaTitle uppercaseString];
+            } else {
+                _uppercaseTitle = _alphaTitle;
+            }
         }
         
         DLog(@"Key: %@ %@ %@ %@", _alphaTitle, _uppercaseTitle, _numberTitle, _symbolTitle);
@@ -84,19 +95,23 @@
 
 + (instancetype)key:(NSString *)title
 {
-    return [[Key alloc] initWithTitle:title numbers:nil symbols:nil width:1 tag:0 font:kKeyboardFontSize];
+    return [[Key alloc] initWithTitle:title upper:nil number:nil symbol:nil width:1 tag:0 font:kKeyboardFontSize];
 }
 
-+ (instancetype)key:(NSString *)title numbers:(NSString*)numbers symbols:(NSString *)symbols
++ (instancetype)key:(NSString *)title number:(NSString*)number symbol:(NSString *)symbol
 {
-    return [[Key alloc] initWithTitle:title numbers:numbers symbols:symbols width:1 tag:0 font:kKeyboardFontSize];
+    return [[Key alloc] initWithTitle:title upper:nil number:number symbol:symbol width:1 tag:0 font:kKeyboardFontSize];
 }
 
-+ (instancetype)key:(NSString*)title numbers:(NSString*)numbers width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
++ (instancetype)key:(NSString*)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
 {
-    return [[Key alloc] initWithTitle:title numbers:numbers symbols:nil width:width tag:tag font:fontSize];
+    return [[Key alloc] initWithTitle:title upper:nil number:number symbol:nil width:width tag:tag font:fontSize];
 }
 
++ (instancetype)key:(NSString*)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
+{
+    return [[Key alloc] initWithTitle:title upper:upper number:number symbol:symbol width:width tag:tag font:fontSize];
+}
 - (void)layoutSubviews
 {
     [super layoutSubviews];
