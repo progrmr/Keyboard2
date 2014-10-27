@@ -24,6 +24,9 @@ enum {
     
     kKeyHeightPortrait =        44,
     kKeyHeightLandscape =       38,
+    kKeyInsetX =                2,
+    kKeyInsetY =                5,
+    kKeyCornerRadius =          4,
     
     kKeyboardHeightPortrait =   (kNumberOfRows * kKeyHeightPortrait) + kPreviewHeight,
     kKeyboardHeightLandscape =  (kNumberOfRows * kKeyHeightLandscape) + kPreviewHeight,

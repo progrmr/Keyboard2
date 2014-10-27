@@ -37,12 +37,12 @@ NSString* kKeyboardFontName;
         kKeyFontColor               = [UIColor colorWithWhite:0.00f alpha:1];
         kKeyBorderColor             = [UIColor colorWithWhite:0.00f alpha:1];
         
-        kKeyNormalBorderWidth       = 0.5f;
+        kKeyNormalBorderWidth       = 0.0f;
         kKeyTouchedBorderWidth      = 2.0f;
         
         kKeySpacerY                 = -5.0f;
         
-        kKeyboardFontName           = @"Helvetica";
+        kKeyboardFontName           = @"Helvetica-Light";
     }
 }
 

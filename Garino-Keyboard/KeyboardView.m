@@ -22,6 +22,7 @@
 @property (nonatomic, strong) NSMutableArray* keyHeights;   // array of NSLayoutConstraint
 @property (nonatomic, strong) UIView*         insertionBar;
 @property (nonatomic, strong) CrosshairsView* crossHairView;
+@property (nonatomic, strong) Key*            backspaceKey;
 @property (nonatomic, strong) Key*            curKey;
 @property (nonatomic, assign) CGFloat         keyError;     // range 0..100
 @end
@@ -43,12 +44,14 @@
         _beforeLabel.textAlignment = NSTextAlignmentRight;
         _beforeLabel.lineBreakMode = NSLineBreakByTruncatingHead;
         _beforeLabel.font = [UIFont fontWithName:kKeyboardFontName size:kKeyboardFontSize];
+        _beforeLabel.backgroundColor = kKeyboardBackgroundColor;
         [self addSubview:_beforeLabel];
         
         _afterLabel = [[UILabel alloc] initWithFrame:CGRectMake(0,0,0,kPreviewHeight)];
         _afterLabel.textAlignment = NSTextAlignmentLeft;
         _afterLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         _afterLabel.font = [UIFont fontWithName:kKeyboardFontName size:kKeyboardFontSize];
+        _afterLabel.backgroundColor = kKeyboardBackgroundColor;
         [self addSubview:_afterLabel];
         
         _crossHairView = [[CrosshairsView alloc] init];
@@ -183,6 +186,11 @@
         
         // add target/action for touch up inside
         [key addTarget:target action:action forControlEvents:UIControlEventTouchUpInside];
+        
+        // find the backspace key
+        if (key.tag == BackspaceKey) {
+            self.backspaceKey = key;
+        }
     }
     
     // this is a full row of keys, pin them to the view left and right bounds
@@ -261,6 +269,12 @@
     const CGPoint touchPoint  = [touch locationInView:self];
 
     const CGFloat touchOffset = touchPoint.y - kPreviewHeight;
+    
+    if (touchOffset < 0) {
+        // touch is off the top of the keyboard in the preview area, treat as backspace
+        return self.backspaceKey;
+    }
+    
     const CGFloat keyRowsHeight = self.bounds.size.height - kPreviewHeight;
     NSUInteger curRow = (NSUInteger) ((touchOffset / keyRowsHeight) * kNumberOfRows);
     if (curRow >= self.keyRows.count) {
@@ -341,11 +355,13 @@
         _curKey = [self keyFromTouch:touch];
         DLog(@">>> key: %@", _curKey.name);
         
-        [_curKey sendActionsForControlEvents:UIControlEventTouchDown];
-        
-        self.crossHairView.alpha = 1;
-        
-        [self updatePreviewText];
+        if (_curKey) {
+            [_curKey sendActionsForControlEvents:UIControlEventTouchDown];
+            
+            self.crossHairView.alpha = 1;
+            
+            [self updatePreviewText];
+        }
     }
     return YES;
 }
@@ -371,12 +387,14 @@
     if (event.type == UIEventTypeTouches) {
         DLog(@"key: %@", _curKey.name);
         
-        [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
-        
-        _curKey = nil;
-        self.backgroundColor = kKeyboardBackgroundColor;
-        self.crossHairView.alpha = 0;
-        [self updatePreviewText];
+        if (_curKey) {
+            [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
+            
+            _curKey = nil;
+            self.backgroundColor = kKeyboardBackgroundColor;
+            self.crossHairView.alpha = 0;
+            [self updatePreviewText];
+        }
     }
 }
 
@@ -393,26 +411,28 @@
             _curKey = newKey;
         }
         
-        if (self.keyError >= kDiscardPercent) {
-            // too much error, discard key press
-            [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
-            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+        if (_curKey) {
+            if (self.keyError >= kDiscardPercent) {
+                // too much error, discard key press
+                [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
+                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
+                
+            } else {
+                [_curKey sendActionsForControlEvents:UIControlEventTouchUpInside];
+            }
             
-        } else {
-            [_curKey sendActionsForControlEvents:UIControlEventTouchUpInside];
+            _curKey = nil;
+            self.backgroundColor = kKeyboardBackgroundColor;
+            [self updatePreviewText];
+            
+            [UIView animateWithDuration:0.25
+                                  delay:0.25
+                                options:0
+                             animations:^{
+                                 self.crossHairView.alpha = 0;
+                             }
+                             completion:nil];
         }
-        
-        _curKey = nil;
-        self.backgroundColor = kKeyboardBackgroundColor;
-        [self updatePreviewText];
-        
-        [UIView animateWithDuration:0.25
-                              delay:0.25
-                            options:0
-                         animations:^{
-                             self.crossHairView.alpha = 0;
-                         }
-                         completion:nil];
     }
 }
 
