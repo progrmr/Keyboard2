@@ -13,6 +13,10 @@ enum {
     kPreviewWidth  =            100,
     kPreviewHeight =            40,
     
+    kMaxErrorPoints =           20,
+    kWarningPercent =           60,
+    kDiscardPercent =           75,
+    
     kKeyboardFontSize =         28,
     
     kNumberOfRows =             4,

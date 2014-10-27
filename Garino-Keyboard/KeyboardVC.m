@@ -21,12 +21,6 @@
 
 @property (nonatomic, strong) UIView* nextKeyboardButton;
 
-//@property (nonatomic, strong) UISwipeGestureRecognizer* backspaceGR;
-//@property (nonatomic, strong) UISwipeGestureRecognizer* spaceGR;
-//@property (nonatomic, strong) UISwipeGestureRecognizer* returnGR;
-//@property (nonatomic, strong) UISwipeGestureRecognizer* shiftGR;
-//@property (nonatomic, strong) UISwipeGestureRecognizer* shiftLockGR;
-
 @end
 
 
@@ -192,6 +186,7 @@ const ShiftState nextNumberState[] = {
 
 - (void)textDidChange:(id<UITextInput>)textInput {
     // The app has just changed the document's contents, the document context has been updated.
+    [self.keyboardView updatePreviewText];
     DLog(@"");
 }
 
