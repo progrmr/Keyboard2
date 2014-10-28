@@ -13,12 +13,7 @@
 UIColor* kKeyboardBackgroundColor;
 UIColor* kKeyBackgroundColor;
 UIColor* kKeyFontColor;
-UIColor* kKeyBorderColor;
 UIColor* kSpecialKeyColor;
-
-// Border
-CGFloat kKeyNormalBorderWidth;
-CGFloat kKeyTouchedBorderWidth;
 
 // Spacing
 CGFloat kKeySpacerY;
@@ -35,10 +30,6 @@ NSString* kKeyboardFontName;
         kKeyboardBackgroundColor    = [UIColor colorWithRGB:0xd2d5db];
         kKeyBackgroundColor         = [UIColor colorWithWhite:1.00f alpha:1];
         kKeyFontColor               = [UIColor colorWithWhite:0.00f alpha:1];
-        kKeyBorderColor             = [UIColor colorWithWhite:0.00f alpha:1];
-        
-        kKeyNormalBorderWidth       = 0.0f;
-        kKeyTouchedBorderWidth      = 2.0f;
         
         kKeySpacerY                 = -5.0f;
         

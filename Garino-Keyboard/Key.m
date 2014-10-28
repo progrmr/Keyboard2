@@ -11,17 +11,24 @@
 
 @interface Key () {
     UIColor* _keyColor;
-    UIColor* _borderColor;
-    CGFloat  _borderWidth;
-    CGFloat  _cornerRadius;
+      CGFloat  _cornerRadius;
 }
+
+@property (nonatomic, readonly) NSString*       alphaTitle;
+@property (nonatomic, readonly) NSArray*        alphaExtras;
+@property (nonatomic, readonly) NSString*       uppercaseTitle;
+@property (nonatomic, readonly) NSString*       numberTitle;
+@property (nonatomic, readonly) NSString*       symbolTitle;
+@property (nonatomic, strong)   UIBezierPath*   borderPath;
+
 @end
+
 
 #define kShadowOpacity (0.75f)
 
 @implementation Key
 
-- (id)initWithTitle:(NSString*)alpha
+- (id)initWithTitle:(id)alpha
               upper:(NSString*)upper
              number:(NSString*)number
              symbol:(NSString*)symbol
@@ -34,7 +41,12 @@
         self.tag        = tag;
         _width          = width;
         
-        _alphaTitle     = alpha;
+        if ([alpha isKindOfClass:[NSArray class]]) {
+            _alphaTitle  = alpha[0];    // primary title for this key
+            _alphaExtras = alpha;       // array of possible titles for this key
+        } else {
+            _alphaTitle = alpha;
+        }
         
         if (number) {
             _numberTitle = number;
@@ -77,33 +89,29 @@
         
         self.titleEdgeInsets = UIEdgeInsetsMake(0, 2, 0, 2);
         
-        [self setTitle:alpha forState:UIControlStateNormal];
+        [self setTitle:_alphaTitle forState:UIControlStateNormal];
         [self setTitleColor:kKeyFontColor forState:UIControlStateNormal];
-        
-        // add a border outline
-        _borderColor = kKeyBorderColor;
-        _borderWidth = kKeyNormalBorderWidth;
-        _cornerRadius = kKeyCornerRadius;
         
         if (self.tag == Untagged || self.tag == SpaceBar) {
             _keyColor = kKeyBackgroundColor;
         } else {
             _keyColor = kSpecialKeyColor;
         }
+        _cornerRadius = kKeyCornerRadius;
         
-        self.layer.shadowColor  = [UIColor blackColor].CGColor;
-        self.layer.shadowRadius = 1.0f;
-        self.layer.shadowOffset = CGSizeMake(0,1);
+        self.layer.shadowColor   = [UIColor blackColor].CGColor;
+        self.layer.shadowRadius  = 1.0f;
+        self.layer.shadowOffset  = CGSizeMake(0,1);
         self.layer.shadowOpacity = kShadowOpacity;
 
         [self setNeedsLayout];      // layoutSubviews computes cornerRadius
         
         // track touches to change looks when touched
-        [self addTarget:self action:@selector(touchStarted) forControlEvents:UIControlEventTouchDown];
-        [self addTarget:self action:@selector(touchStarted) forControlEvents:UIControlEventTouchDragEnter];
-        [self addTarget:self action:@selector(touchEnded)   forControlEvents:UIControlEventTouchUpInside];
-        [self addTarget:self action:@selector(touchEnded)   forControlEvents:UIControlEventTouchDragExit];
-        [self addTarget:self action:@selector(touchEnded)   forControlEvents:UIControlEventTouchCancel];
+        [self addTarget:self action:@selector(touchStarted:) forControlEvents:UIControlEventTouchDown];
+        [self addTarget:self action:@selector(touchStarted:) forControlEvents:UIControlEventTouchDragEnter];
+        [self addTarget:self action:@selector(touchEnded:)   forControlEvents:UIControlEventTouchUpInside];
+        [self addTarget:self action:@selector(touchEnded:)   forControlEvents:UIControlEventTouchDragExit];
+        [self addTarget:self action:@selector(touchEnded:)   forControlEvents:UIControlEventTouchCancel];
     }
     return self;
 }
@@ -113,17 +121,17 @@
     return [[Key alloc] initWithTitle:title upper:nil number:nil symbol:nil width:1 tag:0 font:kKeyboardFontSize];
 }
 
-+ (instancetype)key:(NSString *)title number:(NSString*)number symbol:(NSString *)symbol
++ (instancetype)key:(id)title number:(NSString*)number symbol:(NSString *)symbol
 {
     return [[Key alloc] initWithTitle:title upper:nil number:number symbol:symbol width:1 tag:0 font:kKeyboardFontSize];
 }
 
-+ (instancetype)key:(NSString*)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
++ (instancetype)key:(id)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
 {
     return [[Key alloc] initWithTitle:title upper:nil number:number symbol:nil width:width tag:tag font:fontSize];
 }
 
-+ (instancetype)key:(NSString*)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
++ (instancetype)key:(id)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
 {
     return [[Key alloc] initWithTitle:title upper:upper number:number symbol:symbol width:width tag:tag font:fontSize];
 }
@@ -133,6 +141,14 @@
 {
     [super layoutSubviews];
 
+    // guard against initial size of 0
+    CGRect bounds = self.bounds;
+    if (bounds.size.height >= 1 && bounds.size.width >= 1) {
+        CGRect insetRect = CGRectInset(bounds, kKeyInsetX, kKeyInsetY);
+        self.borderPath = [UIBezierPath bezierPathWithRoundedRect:insetRect cornerRadius:_cornerRadius];
+        self.layer.shadowPath = self.borderPath.CGPath;
+    }
+    
     [self setNeedsDisplay];
 }
 
@@ -143,29 +159,20 @@
 
 - (void)updateShiftKey
 {
-    if (_isTouched || _shiftState == Shifted) {
-//        _borderWidth = kKeyTouchedBorderWidth;
-        self.layer.shadowOpacity = 0;
-        
-    } else if (_shiftState == ShiftLock || _shiftState == Symbols) {
-//        _borderWidth = kKeyTouchedBorderWidth;
-        self.layer.shadowOpacity = 0;
-        
-    } else {
-//        _borderWidth = kKeyNormalBorderWidth;
-        self.layer.shadowOpacity = kShadowOpacity;
-    }
+    const BOOL keyDown = _isTouched || _shiftState == Shifted || _shiftState == ShiftLock || _shiftState == Symbols;
+    
+    // no shadow when key is pressed or shifted or locked
+    self.layer.shadowOpacity = keyDown ? 0 : kShadowOpacity;
     
     [self setNeedsDisplay];
 }
 
 - (void)updateNumbersKey
 {
-    if (_isTouched || _shiftState == Numbers || _shiftState == Symbols) {
-        self.layer.shadowOpacity = 0;
-    } else {
-        self.layer.shadowOpacity = kShadowOpacity;
-    }
+    const BOOL numbersMode = _isTouched || _shiftState == Numbers || _shiftState == Symbols;
+    
+    // no shadow when key pressed or in numbers/symbols mode
+    self.layer.shadowOpacity = numbersMode ? 0 : kShadowOpacity;
     
     [self setNeedsDisplay];
 }
@@ -176,23 +183,27 @@
         _isTouched = isTouched;
         
         //DLog(@"%@ key %@", self.name, isTouched ? @"touched" : @"released");
+
         if (self.tag == ShiftKey) {
             [self updateShiftKey];
             
         } else if (self.tag == NumbersKey) {
             [self updateNumbersKey];
         
-        } else if (isTouched) {
-            //_borderWidth = kKeyTouchedBorderWidth;
-            self.layer.shadowOpacity = 0;
-            
         } else {
-            //_borderWidth = kKeyNormalBorderWidth;
-            self.layer.shadowOpacity = kShadowOpacity;
+            self.layer.shadowOpacity = isTouched ? 0 : kShadowOpacity;
+            [self setNeedsDisplay];
         }
+    }    
+}
+
+- (void)setIsTouchedLong:(BOOL)isTouchedLong
+{
+    if (_isTouchedLong != isTouchedLong) {
+        _isTouchedLong = isTouchedLong;
+        
+        [self setNeedsDisplay];
     }
-    
-    [self setNeedsDisplay];
 }
 
 - (void)setShiftState:(ShiftState)shiftState
@@ -248,12 +259,12 @@
 
 #pragma mark - Touch Tracking
 
-- (void)touchStarted
+- (void)touchStarted:(id)sender
 {
     self.isTouched = YES;
 }
 
-- (void)touchEnded
+- (void)touchEnded:(id)sender
 {
     self.isTouched = NO;
 }
@@ -262,21 +273,12 @@
 
 - (void)drawRect:(CGRect)rect
 {
-    CGRect insetRect = CGRectInset(rect, kKeyInsetX, kKeyInsetY);
-    
-    // Drawing code.
+    // Draw key border and fill inside
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
-    CGContextSetFillColorWithColor(ctx, _keyColor.CGColor);
-    CGContextSetStrokeColorWithColor(ctx, _borderColor.CGColor);
+    CGContextSetFillColorWithColor  (ctx, _keyColor.CGColor);
     
-    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:insetRect cornerRadius:_cornerRadius];
-    [path fill];
-    
-    path.lineWidth = _borderWidth;
-    [path stroke];
-    
-    self.layer.shadowPath = path.CGPath;
+    [self.borderPath fill];
 }
 
 @end

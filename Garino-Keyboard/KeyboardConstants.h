@@ -36,12 +36,7 @@ enum {
 extern UIColor* kKeyboardBackgroundColor;
 extern UIColor* kKeyBackgroundColor;
 extern UIColor* kKeyFontColor;
-extern UIColor* kKeyBorderColor;
 extern UIColor* kSpecialKeyColor;
-
-// Border
-extern CGFloat kKeyNormalBorderWidth;
-extern CGFloat kKeyTouchedBorderWidth;
 
 // Spacing
 extern CGFloat kKeySpacerY;

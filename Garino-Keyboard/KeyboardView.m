@@ -425,7 +425,7 @@
             self.backgroundColor = kKeyboardBackgroundColor;
             [self updatePreviewText];
             
-            [UIView animateWithDuration:0.25
+            [UIView animateWithDuration:0.20
                                   delay:0.25
                                 options:0
                              animations:^{

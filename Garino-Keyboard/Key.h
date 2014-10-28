@@ -13,10 +13,11 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 
 @interface Key : UIButton
 
-+ (instancetype)key:(NSString*)title;
-+ (instancetype)key:(NSString*)title number:(NSString*)number symbol:(NSString*)symbol;
-+ (instancetype)key:(NSString*)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
-+ (instancetype)key:(NSString*)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
+// title can be an NSString* or NSArray* of NSString*
++ (instancetype)key:(id)title;
++ (instancetype)key:(id)title number:(NSString*)number symbol:(NSString*)symbol;
++ (instancetype)key:(id)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
++ (instancetype)key:(id)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
 
 @property (nonatomic, readonly) NSString*   name;       // name for debug purposes, uses tag
 @property (nonatomic, readonly) NSString*   title;      // string that currently appears to user
@@ -24,11 +25,7 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 @property (nonatomic, readonly) BOOL        isAlpha;    // alpha key: A-Z
 
 @property (nonatomic, assign)   BOOL        isTouched;
+@property (nonatomic, assign)   BOOL        isTouchedLong;      // shows extra key options after long press
 @property (nonatomic, assign)   ShiftState  shiftState;
-
-@property (nonatomic, readonly)   NSString*   alphaTitle;
-@property (nonatomic, readonly)   NSString*   uppercaseTitle;
-@property (nonatomic, readonly)   NSString*   numberTitle;
-@property (nonatomic, readonly)   NSString*   symbolTitle;
 
 @end
