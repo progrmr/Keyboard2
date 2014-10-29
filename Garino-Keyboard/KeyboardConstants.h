@@ -11,11 +11,11 @@
 enum {
     kPreviewOffset =            75,
     kPreviewWidth  =            100,
-    kPreviewHeight =            40,
+    kPreviewHeight =            32,
     
     kMaxErrorPoints =           20,
-    kWarningPercent =           60,
-    kDiscardPercent =           75,
+    kDiscardPoints =            15,
+    kWarningPoints =            10,
     
     kKeyboardFontSize =         28,
     

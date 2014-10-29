@@ -13,6 +13,8 @@
 #import "NSLayoutConstraint+Additions.h"
 #import <AudioToolbox/AudioServices.h>
 
+#define kInsertionBarWidth (2.0f)
+
 @interface KeyboardView ()
 @property (nonatomic, strong) UILabel*        beforeLabel;
 @property (nonatomic, strong) UILabel*        afterLabel;
@@ -23,14 +25,10 @@
 @property (nonatomic, strong) UIView*         insertionBar;
 @property (nonatomic, strong) CrosshairsView* crossHairView;
 @property (nonatomic, strong) Key*            backspaceKey; // reference to backspace key
-
 @property (nonatomic, strong) Key*            curKey;       // currently pressed key
-@property (nonatomic, assign) CGFloat         keyError;     // range 0..100 (max error)
 @end
 
 @implementation KeyboardView
-
-#define kInsertionBarWidth (2.0f)
 
 - (id)init
 {
@@ -91,7 +89,7 @@
     CGRect insertionBarFrame = CGRectMake(CGRectGetMaxX(beforeFrame),
                                           beforeFrame.origin.y+4,
                                           kInsertionBarWidth,
-                                          beforeFrame.size.height-8);
+                                          beforeFrame.size.height-6);
     self.insertionBar.frame = insertionBarFrame;
 }
 
@@ -143,12 +141,12 @@
 
 - (void)appendRowOfKeys:(NSArray *)keys target:(id)target action:(SEL)action
 {
-    const NSUInteger rowIndex = self.keyRows.count;
+    const unsigned rowIndex = (unsigned) self.keyRows.count;
     const NSUInteger nKeys = keys.count;
     const BOOL firstRow = (rowIndex == 0);
     const NSLayoutAttribute belowAttr = /* firstRow ? NSLayoutAttributeTop : */ NSLayoutAttributeBottom;
     UIView* belowView = firstRow ? _beforeLabel : self.keyRows[rowIndex-1][0];
-    CGFloat rowWidth = 0;
+    float rowWidth = 0;
     
     for (NSUInteger keyIndex=0; keyIndex<nKeys; keyIndex++) {
         Key* key = keys[keyIndex];
@@ -187,10 +185,10 @@
     [self addConstraint: NSLC(keys[0], self, NSLayoutAttributeLeft, 1, 0)];
     
     if (lroundf(rowWidth) == kNumberOfKeysPerRow) {
-        DLog(@"row %d is full row of %0.0f keys", rowIndex, rowWidth);
+        DLog(@"row %u is full row of %0.0f keys", rowIndex, rowWidth);
         [self addConstraint: NSLC(keys[nKeys-1], self, NSLayoutAttributeRight, 1, 0)];
     } else {
-        DLog(@"row %d is partial row of %0.1f keys", rowIndex, rowWidth);
+        DLog(@"row %u is partial row of %0.1f keys", rowIndex, rowWidth);
     }
    
     // add the row of keys array to the keyRows array
@@ -203,61 +201,33 @@
 #pragma mark -
 #pragma mark Touch Tracking
 
-- (CGFloat)showCrossHairsForTouchPoint:(CGPoint)touchPoint
-                                forKey:(Key*)touchedKey
-                         atKeyRowIndex:(NSUInteger)rowIndex
-                         atKeyColIndex:(NSUInteger)colIndex
-                       withMaxColIndex:(NSUInteger)maxColIndex
+- (void)showCrossHairsForTouchPoint:(CGPoint)touchPoint inKey:(Key*)touchedKey
 {
-    CGRect keyFrame = touchedKey.frame;
+    CGFloat errorPoints = touchedKey.errorPoints;
     
-    CGFloat xFromLeft  = kMaxErrorPoints - MIN(kMaxErrorPoints, touchPoint.x - CGRectGetMinX(keyFrame));
-    CGFloat xFromRight = kMaxErrorPoints - MIN(kMaxErrorPoints, CGRectGetMaxX(keyFrame) - touchPoint.x);
-    if (xFromLeft > 0 && colIndex == 0) {
-        xFromLeft = 0;      // ignore errors off the left side of the leftmost key
-    } else if (xFromRight > 0 && colIndex == maxColIndex) {
-        xFromRight = 0;     // ignore errors off the right side of the rightmost key
-    }
-    CGFloat xError = MAX(xFromLeft/kMaxErrorPoints, xFromRight/kMaxErrorPoints);
-    
-    CGFloat yFromTop    = kMaxErrorPoints - MIN(kMaxErrorPoints, touchPoint.y - CGRectGetMinY(keyFrame));
-    CGFloat yFromBottom = kMaxErrorPoints - MIN(kMaxErrorPoints, CGRectGetMaxY(keyFrame) - touchPoint.y);
-    if (yFromBottom > 0 && rowIndex == kNumberOfRows-1) {
-        yFromBottom = 0;     // ignore errors off the bottom side of the last row, no row below it
-    }
-    CGFloat yError = MAX(yFromTop/kMaxErrorPoints, yFromBottom/kMaxErrorPoints);
-    
-    CGFloat errorPercent = MAX(fabsf(xError), fabsf(yError)) * 100.0f;
-    
-    ///DLog(@"touchPoint: %3.0f %3.0f, err: %0.2f", touchPoint.x, touchPoint.y, maxError);
-    
-    UIColor* crossHairColor = nil;
-    CGFloat crossLineWidth = 1;
-
-    if (errorPercent >= kDiscardPercent) {
-        crossHairColor = [UIColor redColor];
-        crossLineWidth = 3;
-    } else if (errorPercent >= kWarningPercent) {
-        crossHairColor = [UIColor orangeColor];
-        crossLineWidth = 2;
+    if (errorPoints >= kDiscardPoints) {
+        self.backgroundColor = [UIColor redColor];
+        self.crossHairView.crossColor  = [UIColor redColor];
+        self.crossHairView.lineWidth  = 3;
+        
+    } else if (errorPoints >= kWarningPoints) {
+        self.backgroundColor = kKeyBackgroundColor;
+        self.crossHairView.crossColor  = [UIColor orangeColor];
+        self.crossHairView.lineWidth  = 2;
+        
     } else {
-        crossHairColor = [UIColor colorWithRed:0 green:0.66f blue:0 alpha:1];
-        crossLineWidth = 1;
+        self.backgroundColor = kKeyBackgroundColor;
+        self.crossHairView.crossColor  = [UIColor colorWithRed:0 green:0.66f blue:0 alpha:1];
+        self.crossHairView.lineWidth  = 1;
     }
     
-    self.crossHairView.crossColor   = crossHairColor;
-    self.crossHairView.lineWidth    = crossLineWidth;
-    self.crossHairView.center       = touchPoint;
-    
-    return errorPercent;
+    self.crossHairView.center = touchPoint;
 }
 
 // returns currently touched key,
 // updates self.keyError property
-- (Key*)keyFromTouch:(UITouch*)touch
+- (Key*)keyFromTouchPoint:(CGPoint)touchPoint
 {
-    const CGPoint touchPoint  = [touch locationInView:self];
-
     const CGFloat touchOffset = touchPoint.y - kPreviewHeight;
     
     if (touchOffset < 0) {
@@ -285,15 +255,6 @@
             }
         }
     }
-    
-    self.keyError = [self showCrossHairsForTouchPoint:touchPoint
-                                               forKey:touchedKey
-                                        atKeyRowIndex:curRow
-                                        atKeyColIndex:curCol
-                                      withMaxColIndex:keys.count-1];
-    
-    self.backgroundColor = (self.keyError >= kDiscardPercent) ? [UIColor redColor] : kKeyboardBackgroundColor;
-
     return touchedKey;
 }
 
@@ -342,13 +303,16 @@
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeTouches) {
-        _curKey = [self keyFromTouch:touch];
+        const CGPoint touchPoint  = [touch locationInView:self];
+        _curKey = [self keyFromTouchPoint:touchPoint];
+        
         DLog(@">>> key: %@", _curKey.name);
         
         if (_curKey) {
-            [_curKey sendActionsForControlEvents:UIControlEventTouchDown];
+            [_curKey beginTrackingWithTouch:touch withEvent:event];
             
             self.crossHairView.alpha = 1;
+            [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
             
             [self updatePreviewText];
         }
@@ -359,14 +323,22 @@
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeTouches) {
-        Key* newKey = [self keyFromTouch:touch];
+        const CGPoint touchPoint  = [touch locationInView:self];
+        Key* newKey = [self keyFromTouchPoint:touchPoint];
+        
         if (newKey != _curKey) {
             // dragged to a new key
-            [_curKey sendActionsForControlEvents:UIControlEventTouchDragExit];
-            [newKey sendActionsForControlEvents:UIControlEventTouchDragEnter];
+            [_curKey cancelTrackingWithEvent:event];
             _curKey = newKey;
+            [newKey beginTrackingWithTouch:touch withEvent:event];
             
+            [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
+
             [self updatePreviewText];
+            
+        } else {
+            [_curKey continueTrackingWithTouch:touch withEvent:event];
+            [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
         }
     }
     return YES;
@@ -378,9 +350,9 @@
         DLog(@"key: %@", _curKey.name);
         
         if (_curKey) {
-            [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
-            
+            [_curKey cancelTrackingWithEvent:event];
             _curKey = nil;
+            
             self.backgroundColor = kKeyboardBackgroundColor;
             self.crossHairView.alpha = 0;
             [self updatePreviewText];
@@ -391,25 +363,29 @@
 - (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     if (event.type == UIEventTypeTouches) {
-        Key* newKey = [self keyFromTouch:touch];
+        const CGPoint touchPoint  = [touch locationInView:self];
+        Key* newKey = [self keyFromTouchPoint:touchPoint];
+        
         DLog(@"  <<< key: %@", _curKey.name);
         
         if (newKey != _curKey) {
             // dragged outside previous key into a new key
-            [_curKey sendActionsForControlEvents:UIControlEventTouchDragExit];
-            [newKey sendActionsForControlEvents:UIControlEventTouchDragEnter];
+            [_curKey cancelTrackingWithEvent:event];
             _curKey = newKey;
+            [newKey beginTrackingWithTouch:touch withEvent:event];
         }
         
         if (_curKey) {
-            if (self.keyError >= kDiscardPercent) {
+            if (_curKey.errorPoints >= kDiscardPoints) {
                 // too much error, discard key press
-                [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
+                [_curKey cancelTrackingWithEvent:event];
             } else {
-                [_curKey sendActionsForControlEvents:UIControlEventTouchUpInside];
+                [_curKey endTrackingWithTouch:touch withEvent:event];
             }
-            
+            [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
+
             _curKey = nil;
+            
             self.backgroundColor = kKeyboardBackgroundColor;
             [self updatePreviewText];
             

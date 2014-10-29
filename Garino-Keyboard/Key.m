@@ -10,16 +10,21 @@
 #import "KeyboardConstants.h"
 
 @interface Key () {
-    UIColor*        _keyColor;
-    CGFloat         _cornerRadius;
+    UIColor*        keyColor;
+    CGFloat         cornerRadius;
+    UIBezierPath*   borderPath;
+    
+    NSString*       alphaTitle;
+    NSArray*        alphaExtras;
+    
+    NSString*       uppercaseTitle;
+    NSMutableArray* upperExtras;
+    
+    NSString*       numberTitle;
+    NSString*       symbolTitle;
 }
 
-@property (nonatomic, readonly) NSString*       alphaTitle;
-@property (nonatomic, readonly) NSArray*        alphaExtras;
-@property (nonatomic, readonly) NSString*       uppercaseTitle;
-@property (nonatomic, readonly) NSString*       numberTitle;
-@property (nonatomic, readonly) NSString*       symbolTitle;
-@property (nonatomic, strong)   UIBezierPath*   borderPath;
+@property (nonatomic, assign)   BOOL        isTouched;
 
 @end
 
@@ -42,38 +47,44 @@
         _width          = width;
         
         if ([alpha isKindOfClass:[NSArray class]]) {
-            _alphaTitle  = alpha[0];    // primary title for this key
-            _alphaExtras = alpha;       // array of possible titles for this key
+            alphaTitle  = alpha[0];    // primary title for this key
+            alphaExtras = alpha;       // array of possible titles for this key
         } else {
-            _alphaTitle = alpha;
+            alphaTitle  = alpha;
         }
         
         if (number) {
-            _numberTitle = number;
+            numberTitle = number;
         } else {
-            _numberTitle = _alphaTitle;
+            numberTitle = alphaTitle;
         }
         
         if (symbol) {
-            _symbolTitle = symbol;
+            symbolTitle = symbol;
         } else {
-            _symbolTitle = _numberTitle;
+            symbolTitle = numberTitle;
         }
         
         if (upper) {
-            _uppercaseTitle = upper;
+            uppercaseTitle = upper;
         } else if (tag != Untagged) {
-            // special key, use lowercase title
-            _uppercaseTitle = _alphaTitle;
+            // special key, use lowercase title even for shifted state
+            uppercaseTitle = alphaTitle;
         } else {
             // no uppercase provided, convert lowercase if alphabetic key
-            unichar ch = [_alphaTitle characterAtIndex:0];
+            unichar ch = [alphaTitle characterAtIndex:0];
             _isAlpha = [[NSCharacterSet lowercaseLetterCharacterSet] characterIsMember:ch];
             
             if (_isAlpha) {
-                _uppercaseTitle = [_alphaTitle uppercaseString];
+                uppercaseTitle = [alphaTitle uppercaseString];
+                if (alphaExtras) {
+                    upperExtras = [NSMutableArray arrayWithCapacity:alphaExtras.count];
+                    for (NSString* lowerExtra in alphaExtras) {
+                        [upperExtras addObject:[lowerExtra uppercaseString]];
+                    }
+                }
             } else {
-                _uppercaseTitle = _alphaTitle;
+                uppercaseTitle = alphaTitle;
             }
         }
         
@@ -89,15 +100,15 @@
         
         self.titleEdgeInsets = UIEdgeInsetsMake(0, 2, 0, 2);
         
-        [self setTitle:_alphaTitle forState:UIControlStateNormal];
+        [self setTitle:alphaTitle forState:UIControlStateNormal];
         [self setTitleColor:kKeyFontColor forState:UIControlStateNormal];
         
         if (self.tag == Untagged || self.tag == SpaceBar) {
-            _keyColor = kKeyBackgroundColor;
+            keyColor = kKeyBackgroundColor;
         } else {
-            _keyColor = kSpecialKeyColor;
+            keyColor = kSpecialKeyColor;
         }
-        _cornerRadius = kKeyCornerRadius;
+        cornerRadius = kKeyCornerRadius;
         
         self.layer.shadowColor   = [UIColor blackColor].CGColor;
         self.layer.shadowRadius  = 1.0f;
@@ -105,25 +116,23 @@
         self.layer.shadowOpacity = kShadowOpacity;
 
         [self setNeedsLayout];      // layoutSubviews computes cornerRadius
-        
-        // track touches to change looks when touched
-        [self addTarget:self action:@selector(touchStarted:) forControlEvents:UIControlEventTouchDown];
-        [self addTarget:self action:@selector(touchStarted:) forControlEvents:UIControlEventTouchDragEnter];
-        [self addTarget:self action:@selector(touchEnded:)   forControlEvents:UIControlEventTouchUpInside];
-        [self addTarget:self action:@selector(touchEnded:)   forControlEvents:UIControlEventTouchDragExit];
-        [self addTarget:self action:@selector(touchEnded:)   forControlEvents:UIControlEventTouchCancel];
     }
     return self;
 }
 
 + (instancetype)key:(NSString *)title
 {
-    return [[Key alloc] initWithTitle:title upper:nil number:nil symbol:nil width:1 tag:0 font:kKeyboardFontSize];
+    return [[Key alloc] initWithTitle:title upper:nil number:nil symbol:nil width:1 tag:Untagged font:kKeyboardFontSize];
 }
 
 + (instancetype)key:(id)title number:(NSString*)number symbol:(NSString *)symbol
 {
-    return [[Key alloc] initWithTitle:title upper:nil number:number symbol:symbol width:1 tag:0 font:kKeyboardFontSize];
+    return [[Key alloc] initWithTitle:title upper:nil number:number symbol:symbol width:1 tag:Untagged font:kKeyboardFontSize];
+}
+
++ (instancetype)key:(id)title number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width
+{
+    return [[Key alloc] initWithTitle:title upper:nil number:number symbol:symbol width:width tag:Untagged font:kKeyboardFontSize];
 }
 
 + (instancetype)key:(id)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize
@@ -136,7 +145,6 @@
     return [[Key alloc] initWithTitle:title upper:upper number:number symbol:symbol width:width tag:tag font:fontSize];
 }
 
-
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -145,8 +153,8 @@
     CGRect bounds = self.bounds;
     if (bounds.size.height >= 1 && bounds.size.width >= 1) {
         CGRect insetRect = CGRectInset(bounds, kKeyInsetX, kKeyInsetY);
-        self.borderPath = [UIBezierPath bezierPathWithRoundedRect:insetRect cornerRadius:_cornerRadius];
-        self.layer.shadowPath = self.borderPath.CGPath;
+        borderPath = [UIBezierPath bezierPathWithRoundedRect:insetRect cornerRadius:cornerRadius];
+        self.layer.shadowPath = borderPath.CGPath;
     }
     
     [self setNeedsDisplay];
@@ -182,7 +190,7 @@
     BOOL hasExtras = NO;
     
     switch (_shiftState) {
-        case Unshifted:     hasExtras = _alphaExtras.count > 1;     break;
+        case Unshifted:     hasExtras = alphaExtras.count > 1;     break;
         case ShiftLock:
         case Shifted:
         case Numbers:
@@ -193,10 +201,22 @@
     return hasExtras;
 }
 
+- (void)setIsTouchedLong:(BOOL)isTouchedLong
+{
+    if (_isTouchedLong != isTouchedLong) {
+        _isTouchedLong = isTouchedLong;
+        [self setNeedsDisplay];
+    }
+}
+
 - (void)setIsTouched:(BOOL)isTouched
 {
     if (_isTouched != isTouched) {
         _isTouched = isTouched;
+        
+        if (!isTouched) {
+            self.isTouchedLong = NO;
+        }
         
         //DLog(@"%@ key %@", self.name, isTouched ? @"touched" : @"released");
         
@@ -208,8 +228,7 @@
         
         } else {
             self.layer.shadowOpacity = isTouched ? 0 : kShadowOpacity;
-            [self setNeedsDisplay];
-            
+    
             if ([self hasExtras]) {
                 if (isTouched) {
                     [self performSelector:@selector(longTouchStarted:)
@@ -225,17 +244,6 @@
     }
 }
 
-- (void)setIsTouchedLong:(BOOL)isTouchedLong
-{
-    if (_isTouchedLong != isTouchedLong) {
-        _isTouchedLong = isTouchedLong;
-        
-        DLog(@"long press: %@", isTouchedLong ? @"YES" : @"NO");
-        
-        [self setNeedsDisplay];
-    }
-}
-
 - (void)setShiftState:(ShiftState)shiftState
 {
     if (_shiftState != shiftState) {
@@ -244,18 +252,18 @@
         NSString* newTitle = nil;
 
         switch (shiftState) {
-            case Unshifted: newTitle = _alphaTitle;      break;
+            case Unshifted: newTitle = alphaTitle;      break;
             case ShiftLock:
-            case Shifted:   newTitle = _uppercaseTitle;  break;
-            case Numbers:   newTitle = _numberTitle;     break;
-            case Symbols:   newTitle = _symbolTitle;     break;
+            case Shifted:   newTitle = uppercaseTitle;  break;
+            case Numbers:   newTitle = numberTitle;     break;
+            case Symbols:   newTitle = symbolTitle;     break;
         }
 
         if (self.tag == ShiftKey) {
             [self updateShiftKey];
             
             if (shiftState == Shifted) {
-                newTitle = _alphaTitle;
+                newTitle = alphaTitle;
             }
             
         } else if (self.tag == NumbersKey) {
@@ -278,31 +286,79 @@
             
         case Untagged:
             switch (self.shiftState) {
-                case Unshifted: return self.alphaTitle;
+                case Unshifted: return alphaTitle;
                 case Shifted:
-                case ShiftLock: return self.uppercaseTitle;
-                case Numbers:   return self.numberTitle;
-                case Symbols:   return self.symbolTitle;
+                case ShiftLock: return uppercaseTitle;
+                case Numbers:   return numberTitle;
+                case Symbols:   return symbolTitle;
             }
     }
 }
 
-#pragma mark - Touch Tracking
-
-- (void)touchStarted:(id)sender
+- (void)setErrorPointsForTouch:(UITouch*)touch
 {
-    self.isTouched = YES;
+    const CGPoint touchPoint = [touch locationInView:self];
+    CGRect keyRect = self.bounds;
+    
+    CGFloat xFromLeft  = kMaxErrorPoints - MIN(kMaxErrorPoints, touchPoint.x - CGRectGetMinX(keyRect));
+    CGFloat xFromRight = kMaxErrorPoints - MIN(kMaxErrorPoints, CGRectGetMaxX(keyRect) - touchPoint.x);
+    if (xFromLeft > 0 && self.leftmost) {
+        xFromLeft = 0;      // ignore errors off the left side of the leftmost key
+    } else if (xFromRight > 0 && self.rightmost) {
+        xFromRight = 0;     // ignore errors off the right side of the rightmost key
+    }
+    CGFloat xError = MAX(xFromLeft, xFromRight);
+    
+    CGFloat yFromTop    = kMaxErrorPoints - MIN(kMaxErrorPoints, touchPoint.y - CGRectGetMinY(keyRect));
+    CGFloat yFromBottom = kMaxErrorPoints - MIN(kMaxErrorPoints, CGRectGetMaxY(keyRect) - touchPoint.y);
+    if (yFromBottom > 0 && self.lastRow) {
+        yFromBottom = 0;     // ignore errors off the bottom side of the last row, no row below it
+    }
+    CGFloat yError = MAX(yFromTop, yFromBottom);
+    
+    _errorPoints = MAX(xError, yError);
+    
+    DLog(@"touchPoint: {%0.0f, %0.0f}  err: %0.0f pts", touchPoint.x, touchPoint.y, _errorPoints);
 }
 
-- (void)touchEnded:(id)sender
-{
-    self.isTouchedLong = NO;
-    self.isTouched     = NO;
-}
+#pragma mark - Touch Start Stop
 
-- (void)longTouchStarted:(id)sender
+- (void)longTouchStarted:(id)object
 {
     self.isTouchedLong = YES;
+}
+
+#pragma mark - Touch Tracking
+
+- (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    DLog(@"");
+    [self setErrorPointsForTouch:touch];
+    
+    self.isTouched = YES;
+    [self sendActionsForControlEvents:UIControlEventTouchDown];
+    return YES;
+}
+
+- (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    [self setErrorPointsForTouch:touch];
+    return YES;
+}
+
+- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    DLog(@"");
+    [self setErrorPointsForTouch:touch];
+    [self sendActionsForControlEvents:UIControlEventTouchUpInside];
+    self.isTouched = NO;
+}
+
+- (void)cancelTrackingWithEvent:(UIEvent *)event
+{
+    DLog(@"");
+    [self sendActionsForControlEvents:UIControlEventTouchCancel];
+    self.isTouched = NO;
 }
 
 #pragma mark - Drawing
@@ -312,9 +368,9 @@
     // Draw key border and fill inside
     CGContextRef ctx = UIGraphicsGetCurrentContext();
     
-    CGContextSetFillColorWithColor  (ctx, _keyColor.CGColor);
+    CGContextSetFillColorWithColor(ctx, keyColor.CGColor);
     
-    [self.borderPath fill];
+    [borderPath fill];
 }
 
 @end

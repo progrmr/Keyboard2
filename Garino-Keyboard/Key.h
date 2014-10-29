@@ -16,6 +16,7 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 // title can be an NSString* or NSArray* of NSString*
 + (instancetype)key:(id)title;
 + (instancetype)key:(id)title number:(NSString*)number symbol:(NSString*)symbol;
++ (instancetype)key:(id)title number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width;
 + (instancetype)key:(id)title number:(NSString*)number width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
 + (instancetype)key:(id)title upper:(NSString*)upper number:(NSString*)number symbol:(NSString*)symbol width:(CGFloat)width tag:(KeyTags)tag font:(CGFloat)fontSize;
 
@@ -24,8 +25,13 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 @property (nonatomic, readonly) CGFloat     width;      // relative key width, default 1.0
 @property (nonatomic, readonly) BOOL        isAlpha;    // alpha key: A-Z
 
-@property (nonatomic, assign)   BOOL        isTouched;
+@property (nonatomic, assign)   BOOL        leftmost;   // key is leftmost key in the row
+@property (nonatomic, assign)   BOOL        rightmost;  // key is rightmost key in the row
+@property (nonatomic, assign)   BOOL        lastRow;    // key is in the last row
+
+@property (nonatomic, readonly) BOOL        isTouched;
 @property (nonatomic, readonly) BOOL        isTouchedLong;      // shows extra key options after long press
+@property (nonatomic, readonly) CGFloat     errorPoints;        // touch error in points
 @property (nonatomic, assign)   ShiftState  shiftState;
 
 @end

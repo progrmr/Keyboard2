@@ -70,8 +70,8 @@ const ShiftState nextNumberState[] = {
     // update keyboard height constraint for orientation change
     const CGSize screenSize = [UIScreen mainScreen].bounds.size;
     const BOOL isLandscape = screenSize.width > screenSize.height;
-    const CGFloat preferredHeight = isLandscape ? kKeyboardHeightLandscape : kKeyboardHeightPortrait;
-    const BOOL heightChanged = lroundf(self.heightConstraint.constant) != lroundf(preferredHeight);
+    const float preferredHeight = isLandscape ? kKeyboardHeightLandscape : kKeyboardHeightPortrait;
+    const BOOL heightChanged = lroundf((float)self.heightConstraint.constant) != lroundf(preferredHeight);
     
     if (heightChanged && self.heightConstraint) {
         DLog(@"orientation: %@, height: %0.0f, was: %0.0f", isLandscape ? @"LANDSCAPE" : @"PORTRAIT", preferredHeight, self.heightConstraint.constant);
@@ -112,8 +112,7 @@ const ShiftState nextNumberState[] = {
     
     NSArray* row3 = @[
                       [Key key:@"⬆︎" upper:@"⇪" number:@"#+=" symbol:@"123" width:1.25f tag:ShiftKey font:22],
-                      [Key key:@[@"qzx", @"q", @"z", @"x"]
-                         upper:@"QZX" number:@"/" symbol:@"\\" width:1.25f tag:Untagged font:kKeyboardFontSize],
+                      [Key key:@[@"qzx", @"q", @"z", @"x"] number:@"/" symbol:@"\\" width:1.25f],
                       [Key key:@"c" number:@"," symbol:nil],
                       [Key key:@"v" number:@"?" symbol:nil],
                       [Key key:@"b" number:@"!" symbol:nil],
