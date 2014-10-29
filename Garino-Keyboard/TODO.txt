@@ -1,0 +1,4 @@
+TODO LIST
+
+* Double tap on space bar: should enter ".  "
+* Holding space bar, backspace should repeat after time delay

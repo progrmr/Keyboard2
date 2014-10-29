@@ -22,9 +22,10 @@
 @property (nonatomic, strong) NSMutableArray* keyHeights;   // array of NSLayoutConstraint
 @property (nonatomic, strong) UIView*         insertionBar;
 @property (nonatomic, strong) CrosshairsView* crossHairView;
-@property (nonatomic, strong) Key*            backspaceKey;
-@property (nonatomic, strong) Key*            curKey;
-@property (nonatomic, assign) CGFloat         keyError;     // range 0..100
+@property (nonatomic, strong) Key*            backspaceKey; // reference to backspace key
+
+@property (nonatomic, strong) Key*            curKey;       // currently pressed key
+@property (nonatomic, assign) CGFloat         keyError;     // range 0..100 (max error)
 @end
 
 @implementation KeyboardView
@@ -114,22 +115,11 @@
     if (_keyHeight != keyHeight) {
         _keyHeight = keyHeight;
    
-        DLog(@"%0.1f", keyHeight);
-        
         for (NSLayoutConstraint* heightConstraint in self.keyHeights) {
             heightConstraint.constant = keyHeight;
         }
         
         [self setNeedsUpdateConstraints];
-    }
-}
-
-- (void)setKeyWidth:(CGFloat)keyWidth
-{
-    if (_keyWidth != keyWidth) {
-        _keyWidth = keyWidth;
-        
-        DLog(@"%0.1f", keyWidth);
     }
 }
 
@@ -140,14 +130,14 @@
     [super setFrame:frame];
 
     if (oldFrame.size.height != frame.size.height) {
-        DLog(@"%@", NSStringFromCGRect(frame));
-        
         const CGFloat keyboardHeight = frame.size.height - kPreviewHeight;
         const CGFloat spaceBetweenRows = kKeySpacerY * (kNumberOfRows-1);
         self.keyHeight = (keyboardHeight - spaceBetweenRows) / kNumberOfRows;
         
         const CGFloat keyboardWidth = frame.size.width;
         self.keyWidth = keyboardWidth / kNumberOfKeysPerRow;
+        
+        DLog(@"%@, keys: {%0.1f, %0.1f}", NSStringFromCGRect(frame), self.keyWidth, self.keyHeight);
     }
 }
 
@@ -415,8 +405,6 @@
             if (self.keyError >= kDiscardPercent) {
                 // too much error, discard key press
                 [_curKey sendActionsForControlEvents:UIControlEventTouchCancel];
-                AudioServicesPlaySystemSound(kSystemSoundID_Vibrate);
-                
             } else {
                 [_curKey sendActionsForControlEvents:UIControlEventTouchUpInside];
             }
@@ -425,8 +413,8 @@
             self.backgroundColor = kKeyboardBackgroundColor;
             [self updatePreviewText];
             
-            [UIView animateWithDuration:0.20
-                                  delay:0.25
+            [UIView animateWithDuration:0.15
+                                  delay:0.35
                                 options:0
                              animations:^{
                                  self.crossHairView.alpha = 0;
