@@ -77,7 +77,7 @@
             }
         }
         
-        DLog(@"Key: %@ %@ %@ %@", _alphaTitle, _uppercaseTitle, _numberTitle, _symbolTitle);
+        ///DLog(@"Key: %@ %@ %@ %@", _alphaTitle, _uppercaseTitle, _numberTitle, _symbolTitle);
         
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.userInteractionEnabled = NO;

@@ -82,6 +82,7 @@
 		8E7495A319DA68B100B9EC9B /* NSLayoutConstraint+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSLayoutConstraint+Additions.h"; path = "Garino-Keyboard/NSLayoutConstraint+Additions.h"; sourceTree = "<group>"; };
 		8E7495D119DA72DC00B9EC9B /* UtilitiesUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UtilitiesUI.h; sourceTree = "<group>"; };
 		8E7495D219DA72DC00B9EC9B /* UtilitiesUI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UtilitiesUI.m; sourceTree = "<group>"; };
+		8E8916AA1A00720300F32987 /* TODO.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = TODO.txt; sourceTree = "<group>"; };
 		8EDDBEE019EC247600AD2D49 /* KeyboardConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardConstants.h; sourceTree = "<group>"; };
 		8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardConstants.m; sourceTree = "<group>"; };
 		8EDDBEE319EC30B300AD2D49 /* KeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardView.h; sourceTree = "<group>"; };
@@ -167,6 +168,7 @@
 		8E74959419DA65EE00B9EC9B /* Garino-Keyboard */ = {
 			isa = PBXGroup;
 			children = (
+				8E8916AA1A00720300F32987 /* TODO.txt */,
 				8EF92A2719ED4D3B00D53AE2 /* Garino-Keyboard.entitlements */,
 				8EDDBEE019EC247600AD2D49 /* KeyboardConstants.h */,
 				8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */,
