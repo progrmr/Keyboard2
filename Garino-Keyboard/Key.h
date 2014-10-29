@@ -25,7 +25,7 @@ typedef enum { Untagged=0, ShiftKey, NumbersKey, BackspaceKey, SpaceBar, ReturnK
 @property (nonatomic, readonly) BOOL        isAlpha;    // alpha key: A-Z
 
 @property (nonatomic, assign)   BOOL        isTouched;
-@property (nonatomic, assign)   BOOL        isTouchedLong;      // shows extra key options after long press
+@property (nonatomic, readonly) BOOL        isTouchedLong;      // shows extra key options after long press
 @property (nonatomic, assign)   ShiftState  shiftState;
 
 @end

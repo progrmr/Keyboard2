@@ -10,8 +10,8 @@
 #import "KeyboardConstants.h"
 
 @interface Key () {
-    UIColor* _keyColor;
-      CGFloat  _cornerRadius;
+    UIColor*        _keyColor;
+    CGFloat         _cornerRadius;
 }
 
 @property (nonatomic, readonly) NSString*       alphaTitle;
@@ -177,13 +177,29 @@
     [self setNeedsDisplay];
 }
 
+- (BOOL)hasExtras
+{
+    BOOL hasExtras = NO;
+    
+    switch (_shiftState) {
+        case Unshifted:     hasExtras = _alphaExtras.count > 1;     break;
+        case ShiftLock:
+        case Shifted:
+        case Numbers:
+        case Symbols:
+            break;
+    }
+    
+    return hasExtras;
+}
+
 - (void)setIsTouched:(BOOL)isTouched
 {
     if (_isTouched != isTouched) {
         _isTouched = isTouched;
         
         //DLog(@"%@ key %@", self.name, isTouched ? @"touched" : @"released");
-
+        
         if (self.tag == ShiftKey) {
             [self updateShiftKey];
             
@@ -193,14 +209,28 @@
         } else {
             self.layer.shadowOpacity = isTouched ? 0 : kShadowOpacity;
             [self setNeedsDisplay];
+            
+            if ([self hasExtras]) {
+                if (isTouched) {
+                    [self performSelector:@selector(longTouchStarted:)
+                               withObject:nil
+                               afterDelay:0.250];
+                } else {
+                    [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                                             selector:@selector(longTouchStarted:)
+                                                               object:nil];
+                }
+            }
         }
-    }    
+    }
 }
 
 - (void)setIsTouchedLong:(BOOL)isTouchedLong
 {
     if (_isTouchedLong != isTouchedLong) {
         _isTouchedLong = isTouchedLong;
+        
+        DLog(@"long press: %@", isTouchedLong ? @"YES" : @"NO");
         
         [self setNeedsDisplay];
     }
@@ -266,7 +296,13 @@
 
 - (void)touchEnded:(id)sender
 {
-    self.isTouched = NO;
+    self.isTouchedLong = NO;
+    self.isTouched     = NO;
+}
+
+- (void)longTouchStarted:(id)sender
+{
+    self.isTouchedLong = YES;
 }
 
 #pragma mark - Drawing

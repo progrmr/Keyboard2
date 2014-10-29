@@ -20,7 +20,7 @@
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>37FBB7F4119C700BD59550E54D9649334F05F430</key>
-		<string>../../../../SDK_Utilities.repo</string>
+		<string>../../../SDK_Utilities.repo</string>
 		<key>847134E5A950E61726858281E54702217C5CD257</key>
 		<string>../..</string>
 	</dict>
