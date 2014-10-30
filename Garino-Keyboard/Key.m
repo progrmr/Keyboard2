@@ -8,6 +8,7 @@
 
 #import "Key.h"
 #import "KeyboardConstants.h"
+#import "ExtraKeys.h"
 
 @interface Key () {
     UIColor*        keyColor;
@@ -120,6 +121,9 @@
         self.layer.shadowOffset  = CGSizeMake(0,1);
         self.layer.shadowOpacity = kShadowOpacity;
 
+//        self.layer.borderWidth = 0.5f;
+//        self.layer.borderColor = [UIColor greenColor].CGColor;
+        
         [self setNeedsLayout];      // layoutSubviews computes cornerRadius
     }
     return self;
@@ -153,10 +157,10 @@
 - (UIView*)extrasView
 {
     if (_extrasView == nil) {
-        _extrasView = [[UIView alloc] initWithFrame:self.bounds];
-        _extrasView.backgroundColor = [UIColor blackColor];
-        _extrasView.layer.borderColor = [UIColor greenColor].CGColor;
-        _extrasView.layer.borderWidth = 1;
+        _extrasView = [[ExtraKeys alloc] initWithFrame:self.bounds];
+        _extrasView.backgroundColor = keyColor;
+        _extrasView.layer.cornerRadius = cornerRadius;
+        [self setNeedsLayout];
     }
     return _extrasView;
 }
@@ -172,9 +176,34 @@
         CGRect insetRect = CGRectInset(bounds, kKeyInsetX, kKeyInsetY);
         borderPath = [UIBezierPath bezierPathWithRoundedRect:insetRect cornerRadius:cornerRadius];
         self.layer.shadowPath = borderPath.CGPath;
+        [self setNeedsDisplay];
     }
-    
-    [self setNeedsDisplay];
+
+    if (_extrasView) {
+        // compute frame for extra keys view
+        const CGRect superBounds = self.superview.bounds;
+        const CGRect keyFrame = self.frame;
+        CGRect extraFrame;
+        extraFrame.size.height = keyFrame.size.height;
+        extraFrame.origin.y    = (keyFrame.origin.y - extraFrame.size.height);
+        extraFrame.size.width  = (alphaExtras.count * (keyFrame.size.width/_width)) - kKeyInsetX*2;
+        extraFrame.origin.x    = (CGRectGetMidX(keyFrame) - (extraFrame.size.width/2)) + kKeyInsetX;
+        
+        // make sure extrasView doesn't go outside bounds of our superview
+        if (extraFrame.origin.y < superBounds.origin.y+kKeyInsetX) {
+            extraFrame.origin.y = superBounds.origin.y+kKeyInsetX;
+        }
+        if (extraFrame.origin.x < superBounds.origin.x+kKeyInsetX) {
+            extraFrame.origin.x = superBounds.origin.x+kKeyInsetX;
+        }
+        if (CGRectGetMaxX(extraFrame) > CGRectGetMaxX(superBounds)) {
+            extraFrame.origin.x = CGRectGetMaxX(superBounds) - extraFrame.size.width;
+        }
+        
+        extraFrame = [self.superview convertRect:extraFrame toView:self];
+        self.extrasView.frame = extraFrame;
+        [self setNeedsDisplay];
+    }
 }
 
 - (NSString*)title
@@ -224,32 +253,11 @@
         _isTouchedLong = isTouchedLong;
         
         if (isTouchedLong) {
-            // compute frame for extra keys view
-            const CGRect superBounds = self.superview.bounds;
-            const CGRect keyFrame = self.frame;
-            CGRect extraFrame;
-            extraFrame.size.height = keyFrame.size.height;
-            extraFrame.origin.y    = keyFrame.origin.y - keyFrame.size.height;
-            extraFrame.size.width  = alphaExtras.count * (keyFrame.size.width/_width);
-            extraFrame.origin.x    = CGRectGetMidX(keyFrame) - (extraFrame.size.width/2);
-            
-            // make sure extrasView doesn't go outside bounds of our superview
-            if (extraFrame.origin.y < superBounds.origin.y) {
-                extraFrame.origin.y = superBounds.origin.y;
-            }
-            if (extraFrame.origin.x < superBounds.origin.x) {
-                extraFrame.origin.x = superBounds.origin.x;
-            }
-            if (CGRectGetMaxX(extraFrame) > CGRectGetMaxX(superBounds)) {
-                extraFrame.origin.x = CGRectGetMaxX(superBounds) - extraFrame.size.width;
-            }
-            
-            extraFrame = [self.superview convertRect:extraFrame toView:self];
-            self.extrasView.frame = extraFrame;
-            
             [self addSubview:self.extrasView];
+            [self setNeedsLayout];
             
         } else {
+            // Caution: extrasView getter will lazy load
             [_extrasView removeFromSuperview];
         }
     }
@@ -279,7 +287,7 @@
                 if (isTouched) {
                     [self performSelector:@selector(longTouchStarted:)
                                withObject:nil
-                               afterDelay:kLongPressDelayMS / 1000];
+                               afterDelay:kLongPressDelayMS / 1000.0];
                 } else {
                     [NSObject cancelPreviousPerformRequestsWithTarget:self
                                                              selector:@selector(longTouchStarted:)
@@ -371,6 +379,7 @@
 
 - (void)longTouchStarted:(id)object
 {
+    DLog(@"");
     self.isTouchedLong = YES;
 }
 
