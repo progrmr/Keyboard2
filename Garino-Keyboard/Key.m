@@ -16,6 +16,7 @@
     
     NSString*       alphaTitle;
     NSArray*        alphaExtras;
+    CGRect          alphaExtrasFrame;
     
     NSString*       uppercaseTitle;
     NSMutableArray* upperExtras;
@@ -25,6 +26,7 @@
 }
 
 @property (nonatomic, assign)   BOOL        isTouched;
+@property (nonatomic, readonly) UIView*     extrasView;     // lazy loaded
 
 @end
 
@@ -32,6 +34,8 @@
 #define kShadowOpacity (0.75f)
 
 @implementation Key
+
+@synthesize extrasView = _extrasView;
 
 - (id)initWithTitle:(id)alpha
               upper:(NSString*)upper
@@ -93,6 +97,7 @@
         self.translatesAutoresizingMaskIntoConstraints = NO;
         self.userInteractionEnabled = NO;
         self.autoresizesSubviews = YES;
+        self.clipsToBounds = NO;
         self.titleLabel.adjustsFontSizeToFitWidth = YES;
         self.titleLabel.minimumScaleFactor = 0.5f;
         self.titleLabel.textAlignment = NSTextAlignmentCenter;
@@ -145,6 +150,17 @@
     return [[Key alloc] initWithTitle:title upper:upper number:number symbol:symbol width:width tag:tag font:fontSize];
 }
 
+- (UIView*)extrasView
+{
+    if (_extrasView == nil) {
+        _extrasView = [[UIView alloc] initWithFrame:self.bounds];
+        _extrasView.backgroundColor = [UIColor blackColor];
+        _extrasView.layer.borderColor = [UIColor greenColor].CGColor;
+        _extrasView.layer.borderWidth = 1;
+    }
+    return _extrasView;
+}
+
 - (void)layoutSubviews
 {
     [super layoutSubviews];
@@ -152,6 +168,7 @@
     // guard against initial size of 0
     CGRect bounds = self.bounds;
     if (bounds.size.height >= 1 && bounds.size.width >= 1) {
+        // create path for normal key border
         CGRect insetRect = CGRectInset(bounds, kKeyInsetX, kKeyInsetY);
         borderPath = [UIBezierPath bezierPathWithRoundedRect:insetRect cornerRadius:cornerRadius];
         self.layer.shadowPath = borderPath.CGPath;
@@ -205,7 +222,36 @@
 {
     if (_isTouchedLong != isTouchedLong) {
         _isTouchedLong = isTouchedLong;
-        [self setNeedsDisplay];
+        
+        if (isTouchedLong) {
+            // compute frame for extra keys view
+            const CGRect superBounds = self.superview.bounds;
+            const CGRect keyFrame = self.frame;
+            CGRect extraFrame;
+            extraFrame.size.height = keyFrame.size.height;
+            extraFrame.origin.y    = keyFrame.origin.y - keyFrame.size.height;
+            extraFrame.size.width  = alphaExtras.count * (keyFrame.size.width/_width);
+            extraFrame.origin.x    = CGRectGetMidX(keyFrame) - (extraFrame.size.width/2);
+            
+            // make sure extrasView doesn't go outside bounds of our superview
+            if (extraFrame.origin.y < superBounds.origin.y) {
+                extraFrame.origin.y = superBounds.origin.y;
+            }
+            if (extraFrame.origin.x < superBounds.origin.x) {
+                extraFrame.origin.x = superBounds.origin.x;
+            }
+            if (CGRectGetMaxX(extraFrame) > CGRectGetMaxX(superBounds)) {
+                extraFrame.origin.x = CGRectGetMaxX(superBounds) - extraFrame.size.width;
+            }
+            
+            extraFrame = [self.superview convertRect:extraFrame toView:self];
+            self.extrasView.frame = extraFrame;
+            
+            [self addSubview:self.extrasView];
+            
+        } else {
+            [_extrasView removeFromSuperview];
+        }
     }
 }
 
@@ -233,7 +279,7 @@
                 if (isTouched) {
                     [self performSelector:@selector(longTouchStarted:)
                                withObject:nil
-                               afterDelay:0.250];
+                               afterDelay:kLongPressDelayMS / 1000];
                 } else {
                     [NSObject cancelPreviousPerformRequestsWithTarget:self
                                                              selector:@selector(longTouchStarted:)

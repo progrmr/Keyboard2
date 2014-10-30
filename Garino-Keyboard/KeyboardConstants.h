@@ -13,6 +13,8 @@ enum {
     kPreviewWidth  =            100,
     kPreviewHeight =            32,
     
+    kLongPressDelayMS =         300,
+    
     kMaxErrorPoints =           20,
     kDiscardPoints =            15,
     kWarningPoints =            10,

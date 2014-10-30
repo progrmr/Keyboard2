@@ -203,20 +203,20 @@
 
 - (void)showCrossHairsForTouchPoint:(CGPoint)touchPoint inKey:(Key*)touchedKey
 {
-    CGFloat errorPoints = touchedKey.errorPoints;
+    CGFloat touchError = touchedKey.errorPoints;
     
-    if (errorPoints >= kDiscardPoints) {
+    if (touchError >= kDiscardPoints) {
         self.backgroundColor = [UIColor redColor];
         self.crossHairView.crossColor  = [UIColor redColor];
         self.crossHairView.lineWidth  = 3;
         
-    } else if (errorPoints >= kWarningPoints) {
-        self.backgroundColor = kKeyBackgroundColor;
+    } else if (touchError >= kWarningPoints) {
+        self.backgroundColor = kKeyboardBackgroundColor;
         self.crossHairView.crossColor  = [UIColor orangeColor];
         self.crossHairView.lineWidth  = 2;
         
     } else {
-        self.backgroundColor = kKeyBackgroundColor;
+        self.backgroundColor = kKeyboardBackgroundColor;
         self.crossHairView.crossColor  = [UIColor colorWithRed:0 green:0.66f blue:0 alpha:1];
         self.crossHairView.lineWidth  = 1;
     }
