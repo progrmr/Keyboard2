@@ -26,6 +26,7 @@
         self.layer.shadowRadius  = 3;
         
         _selectedIndex = NSNotFound;
+        _longTouchDelay = -1;       // invalid, needs to be computed
     }
     return self;
 }
@@ -115,20 +116,28 @@
         }
     }
     
-    // determine the long touch delay time, if the last entry matches the superview's
-    // title, then we need a long touch delay, otherwise delay is 0
-    if ([extraTitles[0] isEqualToString:newExtraTitles[newExtraTitles.count-1]]) {
-        // last entry in newExtraTitles matches superview title (eg: 'n')
-        self.longTouchDelay = kLongPressDelayMS / 1000.0;
-    } else {
-        self.longTouchDelay = 0;
-    }
+    // set the long touch delay based on the unmodified extraTitles
+    [self setLongTouchDelayForTitles:newExtraTitles withSuperTitle:extraTitles[0]];
     
     // save the array of titles and select one of the labels
     _extraTitles = newExtraTitles;
     self.selectedIndex = selectedIndex;
     
     [self setNeedsLayout];
+}
+
+- (void)setLongTouchDelayForTitles:(NSArray*)extraTitles withSuperTitle:(NSString*)superTitle
+{
+    // determine the long touch delay time, if any entry matches the superview's
+    // title, then we need a long touch delay, otherwise delay is 0
+    _longTouchDelay = 0;
+    
+    for (NSString* extraTitle in extraTitles) {
+        if ([extraTitle isEqualToString:superTitle]) {
+            _longTouchDelay = kLongPressDelayMS / 1000.0;
+            break;
+        }
+    }
 }
 
 - (NSUInteger)closestSubviewIndexToTouch:(UITouch*)touch

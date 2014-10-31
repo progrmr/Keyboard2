@@ -85,10 +85,11 @@ const ShiftState nextNumberState[] = {
 {
     [super viewDidLoad];
     
+    NSArray* eKeys = @[@"e", @"e", @"è", @"é", @"ê", @"ë", @"ē", @"ė", @"ę"];
     
     NSArray* row1 = @[
                       [Key key:@"w" number:@"1" symbol:@"["],
-                      [Key key:@"e" number:@"2" symbol:@"]"],
+                      [Key key:eKeys number:@"2" symbol:@"]"],
                       [Key key:@"r" number:@"3" symbol:@"{"],
                       [Key key:@"t" number:@"4" symbol:@"}"],
                       [Key key:@"y" number:@"5" symbol:@"#"],
@@ -110,13 +111,16 @@ const ShiftState nextNumberState[] = {
                       [Key key:@"l" number:@"0" symbol:@"="],
                       ];
     
+    NSArray* qzxKeys = @[@"qzx", @"q", @"*z", @"x"];
+    NSArray* nKeys   = @[@"n", @"ñ", @"n", @"ń"];
+    
     NSArray* row3 = @[
                       [Key key:@"⬆︎" upper:@"⇪" number:@"#+=" symbol:@"123" width:1.25f tag:ShiftKey font:22],
-                      [Key key:@[@"qzx", @"q", @"*z", @"x"] number:@"/" symbol:@"\\" width:1.25f],
+                      [Key key:qzxKeys number:@"/" symbol:@"\\" width:1.25f],
                       [Key key:@"c" number:@"," symbol:nil],
                       [Key key:@"v" number:@"?" symbol:nil],
                       [Key key:@"b" number:@"!" symbol:nil],
-                      [Key key:@[@"n", @"ñ", @"n"] number:@"'" symbol:nil],
+                      [Key key:nKeys number:@"'" symbol:nil],
                       [Key key:@"m" number:@"\"" symbol:nil],
                       [Key key:@"⬅︎" number:nil width:1.50f tag:BackspaceKey font:22],
                       ];

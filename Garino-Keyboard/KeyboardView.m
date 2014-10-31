@@ -75,7 +75,9 @@
     
     CGRect bounds = self.bounds;
     
+    CGPoint crossHairCenter = self.crossHairView.center;
     self.crossHairView.frame = CGRectInset(bounds, -bounds.size.width/2, -bounds.size.height/2);
+    self.crossHairView.center = crossHairCenter;
     
     CGRect beforeFrame = self.beforeLabel.frame;
     beforeFrame.size.width = bounds.size.width / 2;
@@ -315,6 +317,8 @@
             [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
             
             [self updatePreviewText];
+            
+            [self insertSubview:_curKey belowSubview:_crossHairView];
         }
     }
     return YES;
@@ -342,11 +346,13 @@
             // dragged to a new key
             [_curKey cancelTrackingWithEvent:event];
             _curKey = newKey;
-            [newKey beginTrackingWithTouch:touch withEvent:event];
+            [_curKey beginTrackingWithTouch:touch withEvent:event];
             
             [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
 
             [self updatePreviewText];
+            
+            [self insertSubview:_curKey belowSubview:_crossHairView];
         }
     }
     return YES;

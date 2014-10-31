@@ -410,6 +410,7 @@
     [self setErrorPointsForTouch:touch];
     
     self.isTouched = YES;
+    
     [self sendActionsForControlEvents:UIControlEventTouchDown];
     return YES;
 }
