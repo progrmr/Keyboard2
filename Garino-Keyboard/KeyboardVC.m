@@ -116,7 +116,7 @@ const ShiftState nextNumberState[] = {
                       [Key key:@"c" number:@"," symbol:nil],
                       [Key key:@"v" number:@"?" symbol:nil],
                       [Key key:@"b" number:@"!" symbol:nil],
-                      [Key key:@"n" number:@"'" symbol:nil],
+                      [Key key:@[@"n", @"ñ", @"n"] number:@"'" symbol:nil],
                       [Key key:@"m" number:@"\"" symbol:nil],
                       [Key key:@"⬅︎" number:nil width:1.50f tag:BackspaceKey font:22],
                       ];

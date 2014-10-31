@@ -24,9 +24,13 @@
     
     NSString*       numberTitle;
     NSString*       symbolTitle;
+    
+    UITouch*        lastTouch;
+    UIEvent*        lastEvent;
 }
 
 @property (nonatomic, assign)   BOOL        isTouched;
+@property (nonatomic, assign)   BOOL        isTouchedLong;
 @property (nonatomic, readonly) ExtraKeys*  extrasView;     // lazy loaded
 
 @end
@@ -121,9 +125,6 @@
         self.layer.shadowOffset  = CGSizeMake(0,1);
         self.layer.shadowOpacity = kShadowOpacity;
 
-//        self.layer.borderWidth = 0.5f;
-//        self.layer.borderColor = [UIColor greenColor].CGColor;
-        
         [self setNeedsLayout];      // layoutSubviews computes cornerRadius
     }
     return self;
@@ -160,6 +161,7 @@
         _extrasView = [[ExtraKeys alloc] init];
         _extrasView.backgroundColor = keyColor;
         _extrasView.layer.cornerRadius = cornerRadius;
+        _extrasView.extraTitles = [self curExtraTitles];
         [self setNeedsLayout];
     }
     return _extrasView;
@@ -184,9 +186,9 @@
         const CGRect superBounds = self.superview.bounds;
         const CGRect keyFrame = self.frame;
         CGRect extraFrame;
-        extraFrame.size.height = keyFrame.size.height;
+        extraFrame.size.height = keyFrame.size.height - kKeyInsetY*2;
         extraFrame.origin.y    = (keyFrame.origin.y - extraFrame.size.height);
-        extraFrame.size.width  = ((alphaExtras.count-1) * (keyFrame.size.width/_width)) - kKeyInsetX*2;
+        extraFrame.size.width  = (alphaExtras.count-1) * ((keyFrame.size.width/_width) - kKeyInsetX);
         extraFrame.origin.x    = (CGRectGetMidX(keyFrame) - (extraFrame.size.width/2)) + kKeyInsetX;
         
         // make sure extrasView doesn't go outside bounds of our superview
@@ -208,6 +210,9 @@
 
 - (NSString*)title
 {
+    if (_isTouchedLong) {
+        return _extrasView.extraTitles[_extrasView.selectedIndex];
+    }
     return [self titleForState:UIControlStateNormal];
 }
 
@@ -231,12 +236,12 @@
     [self setNeedsDisplay];
 }
 
-- (BOOL)hasExtras
+- (NSArray*)curExtraTitles
 {
-    BOOL hasExtras = NO;
+    NSArray* result = nil;
     
     switch (_shiftState) {
-        case Unshifted:     hasExtras = alphaExtras.count > 1;     break;
+        case Unshifted:     result = alphaExtras;     break;
         case ShiftLock:
         case Shifted:
         case Numbers:
@@ -244,7 +249,7 @@
             break;
     }
     
-    return hasExtras;
+    return result;
 }
 
 - (void)setIsTouchedLong:(BOOL)isTouchedLong
@@ -253,12 +258,14 @@
         _isTouchedLong = isTouchedLong;
         
         if (isTouchedLong) {
-            // set the extraTitles property on the extra's key view
-            self.extrasView.extraTitles = alphaExtras;
-
             // add the extras key view as a subview
             [self addSubview:self.extrasView];
             [self setNeedsLayout];
+            
+            [self.extrasView beginTrackingWithTouch:lastTouch withEvent:lastEvent];
+            
+            lastTouch = nil;
+            lastEvent = nil;
             
         } else {
             // Caution: extrasView getter will lazy load
@@ -287,11 +294,18 @@
         } else {
             self.layer.shadowOpacity = isTouched ? 0 : kShadowOpacity;
     
-            if ([self hasExtras]) {
+            if ([self curExtraTitles] != nil) {
                 if (isTouched) {
-                    [self performSelector:@selector(longTouchStarted:)
-                               withObject:nil
-                               afterDelay:kLongPressDelayMS / 1000.0];
+                    NSTimeInterval longTouchDelay = self.extrasView.longTouchDelay;
+                    
+                    if (longTouchDelay >= 0.001) {
+                        [self performSelector:@selector(longTouchStarted:)
+                                   withObject:nil
+                                   afterDelay:longTouchDelay];
+                    } else {
+                        [self longTouchStarted:nil];    // call synchronously when 0 delay
+                    }
+                    
                 } else {
                     [NSObject cancelPreviousPerformRequestsWithTarget:self
                                                              selector:@selector(longTouchStarted:)
@@ -300,6 +314,11 @@
             }
         }
     }
+}
+
+- (void)longTouchStarted:(id)object
+{
+    self.isTouchedLong = YES;
 }
 
 - (void)setShiftState:(ShiftState)shiftState
@@ -376,15 +395,7 @@
     
     _errorPoints = MAX(xError, yError);
     
-    DLog(@"touchPoint: {%0.0f, %0.0f}  err: %0.0f pts", touchPoint.x, touchPoint.y, _errorPoints);
-}
-
-#pragma mark - Touch Start Stop
-
-- (void)longTouchStarted:(id)object
-{
-    DLog(@"");
-    self.isTouchedLong = YES;
+    ///DLog(@"touchPoint: {%0.0f, %0.0f}  err: %0.0f pts", touchPoint.x, touchPoint.y, _errorPoints);
 }
 
 #pragma mark - Touch Tracking
@@ -392,6 +403,10 @@
 - (BOOL)beginTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
     DLog(@"");
+    // save last touch and event in case we have a long press timer expiration
+    lastTouch = touch;
+    lastEvent = event;
+    
     [self setErrorPointsForTouch:touch];
     
     self.isTouched = YES;
@@ -401,23 +416,54 @@
 
 - (BOOL)continueTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
 {
-    [self setErrorPointsForTouch:touch];
+    if (_isTouchedLong) {
+        _errorPoints = 0;       // no errors, while long touch in progress
+        [self.extrasView continueTrackingWithTouch:touch withEvent:event];
+        
+    } else {
+        // save last touch and event in case we have a long press timer expiration
+        lastTouch = touch;
+        lastEvent = event;
+        
+        [self setErrorPointsForTouch:touch];
+    }
+    
     return YES;
-}
-
-- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
-{
-    DLog(@"");
-    [self setErrorPointsForTouch:touch];
-    [self sendActionsForControlEvents:UIControlEventTouchUpInside];
-    self.isTouched = NO;
 }
 
 - (void)cancelTrackingWithEvent:(UIEvent *)event
 {
     DLog(@"");
+    if (_isTouchedLong) {
+        [self.extrasView cancelTrackingWithEvent:event];
+    }
     [self sendActionsForControlEvents:UIControlEventTouchCancel];
+    
     self.isTouched = NO;
+    lastTouch = nil;
+    lastEvent = nil;
+}
+
+- (void)endTrackingWithTouch:(UITouch *)touch withEvent:(UIEvent *)event
+{
+    DLog(@"");
+    if (_isTouchedLong) {
+        _errorPoints = 0;
+        [self.extrasView endTrackingWithTouch:touch withEvent:event];
+        
+    } else {
+        [self setErrorPointsForTouch:touch];
+    }
+    
+    if (self.errorPoints >= kDiscardPoints) {
+        [self sendActionsForControlEvents:UIControlEventTouchCancel];
+    } else {
+        [self sendActionsForControlEvents:UIControlEventTouchUpInside];
+    }
+    
+    self.isTouched = NO;
+    lastTouch = nil;
+    lastEvent = nil;
 }
 
 #pragma mark - Drawing

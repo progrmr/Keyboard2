@@ -324,9 +324,21 @@
 {
     if (event.type == UIEventTypeTouches) {
         const CGPoint touchPoint  = [touch locationInView:self];
-        Key* newKey = [self keyFromTouchPoint:touchPoint];
         
-        if (newKey != _curKey) {
+        // if a long press is in progress, showing extra keys, continue tracking that key
+        Key* newKey = _curKey.isTouchedLong ? _curKey : [self keyFromTouchPoint:touchPoint];
+        
+        if (newKey == _curKey) {
+            // continue tracking on current key
+            [_curKey continueTrackingWithTouch:touch withEvent:event];
+            [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
+            
+            if (_curKey.isTouchedLong) {
+                // selected key title may change even though we are tracking the same key
+                [self updatePreviewText];
+            }
+            
+        } else {
             // dragged to a new key
             [_curKey cancelTrackingWithEvent:event];
             _curKey = newKey;
@@ -335,10 +347,6 @@
             [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
 
             [self updatePreviewText];
-            
-        } else {
-            [_curKey continueTrackingWithTouch:touch withEvent:event];
-            [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
         }
     }
     return YES;
@@ -364,7 +372,9 @@
 {
     if (event.type == UIEventTypeTouches) {
         const CGPoint touchPoint  = [touch locationInView:self];
-        Key* newKey = [self keyFromTouchPoint:touchPoint];
+        
+        // if a long press is in progress, showing extra keys, continue tracking that key
+        Key* newKey = _curKey.isTouchedLong ? _curKey : [self keyFromTouchPoint:touchPoint];
         
         DLog(@"  <<< key: %@", _curKey.name);
         
@@ -376,12 +386,8 @@
         }
         
         if (_curKey) {
-            if (_curKey.errorPoints >= kDiscardPoints) {
-                // too much error, discard key press
-                [_curKey cancelTrackingWithEvent:event];
-            } else {
-                [_curKey endTrackingWithTouch:touch withEvent:event];
-            }
+            [_curKey endTrackingWithTouch:touch withEvent:event];
+            
             [self showCrossHairsForTouchPoint:touchPoint inKey:_curKey];
 
             _curKey = nil;

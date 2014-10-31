@@ -14,6 +14,8 @@ UIColor* kKeyboardBackgroundColor;
 UIColor* kKeyBackgroundColor;
 UIColor* kKeyFontColor;
 UIColor* kSpecialKeyColor;
+UIColor* kHighlightedKeyColor;   // highlighted key background color
+UIColor* kHighlightedFontColor;
 
 // Spacing
 CGFloat kKeySpacerY;
@@ -29,8 +31,9 @@ NSString* kKeyboardFontName;
         kSpecialKeyColor            = [UIColor colorWithRGB:0xabb3bd];
         kKeyboardBackgroundColor    = [UIColor colorWithRGB:0xd2d5db];
         kKeyBackgroundColor         = [UIColor colorWithWhite:1.00f alpha:1];
+        kHighlightedKeyColor        = [UIColor colorWithRGB:0x007aff];
         kKeyFontColor               = [UIColor colorWithWhite:0.00f alpha:1];
-        
+        kHighlightedFontColor       = [UIColor whiteColor];
         kKeySpacerY                 = 0.0f;
         
         kKeyboardFontName           = @"Helvetica-Light";

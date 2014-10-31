@@ -36,9 +36,11 @@ enum {
 
 // Colors
 extern UIColor* kKeyboardBackgroundColor;
-extern UIColor* kKeyBackgroundColor;
-extern UIColor* kKeyFontColor;
-extern UIColor* kSpecialKeyColor;
+extern UIColor* kKeyBackgroundColor;    // normal key background color
+extern UIColor* kSpecialKeyColor;       // special keys: Shift, Backspace, Return, etc.
+extern UIColor* kHighlightedKeyColor;   // highlighted key background color
+extern UIColor* kKeyFontColor;          // normal key font color
+extern UIColor* kHighlightedFontColor;  // highlighted key font color
 
 // Spacing
 extern CGFloat kKeySpacerY;
