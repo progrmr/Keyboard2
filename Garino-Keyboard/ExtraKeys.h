@@ -10,4 +10,7 @@
 
 @interface ExtraKeys : UIView
 
+// the default extraTitle starts with a "*" character
+@property (nonatomic, copy)     NSArray*    extraTitles;        // extra key titles
+
 @end

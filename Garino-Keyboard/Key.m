@@ -27,7 +27,7 @@
 }
 
 @property (nonatomic, assign)   BOOL        isTouched;
-@property (nonatomic, readonly) UIView*     extrasView;     // lazy loaded
+@property (nonatomic, readonly) ExtraKeys*  extrasView;     // lazy loaded
 
 @end
 
@@ -157,7 +157,7 @@
 - (UIView*)extrasView
 {
     if (_extrasView == nil) {
-        _extrasView = [[ExtraKeys alloc] initWithFrame:self.bounds];
+        _extrasView = [[ExtraKeys alloc] init];
         _extrasView.backgroundColor = keyColor;
         _extrasView.layer.cornerRadius = cornerRadius;
         [self setNeedsLayout];
@@ -186,7 +186,7 @@
         CGRect extraFrame;
         extraFrame.size.height = keyFrame.size.height;
         extraFrame.origin.y    = (keyFrame.origin.y - extraFrame.size.height);
-        extraFrame.size.width  = (alphaExtras.count * (keyFrame.size.width/_width)) - kKeyInsetX*2;
+        extraFrame.size.width  = ((alphaExtras.count-1) * (keyFrame.size.width/_width)) - kKeyInsetX*2;
         extraFrame.origin.x    = (CGRectGetMidX(keyFrame) - (extraFrame.size.width/2)) + kKeyInsetX;
         
         // make sure extrasView doesn't go outside bounds of our superview
@@ -253,6 +253,10 @@
         _isTouchedLong = isTouchedLong;
         
         if (isTouchedLong) {
+            // set the extraTitles property on the extra's key view
+            self.extrasView.extraTitles = alphaExtras;
+
+            // add the extras key view as a subview
             [self addSubview:self.extrasView];
             [self setNeedsLayout];
             
