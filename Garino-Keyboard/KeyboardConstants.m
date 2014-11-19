@@ -14,6 +14,7 @@ UIColor* kKeyboardBackgroundColor;
 UIColor* kKeyBackgroundColor;
 UIColor* kKeyFontColor;
 UIColor* kSpecialKeyColor;
+UIColor* kLockedKeyColor;
 UIColor* kHighlightedKeyColor;   // highlighted key background color
 UIColor* kHighlightedFontColor;
 
@@ -29,6 +30,7 @@ NSString* kKeyboardFontName;
 {
     if (kKeyFontColor == nil) {
         kSpecialKeyColor            = [UIColor colorWithRGB:0xabb3bd];
+        kLockedKeyColor             = [UIColor colorWithRGB:0x000000];
         kKeyboardBackgroundColor    = [UIColor colorWithRGB:0xd2d5db];
         kKeyBackgroundColor         = [UIColor colorWithWhite:1.00f alpha:1];
         kHighlightedKeyColor        = [UIColor colorWithRGB:0x007aff];

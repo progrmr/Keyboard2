@@ -25,13 +25,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8E74958019DA65AD00B9EC9B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8E74955E19DA65AD00B9EC9B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 8E74956519DA65AD00B9EC9B;
-			remoteInfo = Keyboard2;
-		};
 		8E74959A19DA65EE00B9EC9B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8E74955E19DA65AD00B9EC9B /* Project object */;
@@ -75,7 +68,6 @@
 		8E74957019DA65AD00B9EC9B /* RootVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RootVC.h; sourceTree = "<group>"; };
 		8E74957119DA65AD00B9EC9B /* RootVC.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RootVC.m; sourceTree = "<group>"; };
 		8E74957619DA65AD00B9EC9B /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8E74957F19DA65AD00B9EC9B /* Keyboard2Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = Keyboard2Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Garino-Keyboard.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E74959619DA65EE00B9EC9B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E74959719DA65EE00B9EC9B /* KeyboardVC.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeyboardVC.h; sourceTree = "<group>"; };
@@ -88,8 +80,8 @@
 		8EDDBEE119EC247600AD2D49 /* KeyboardConstants.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardConstants.m; sourceTree = "<group>"; };
 		8EDDBEE319EC30B300AD2D49 /* KeyboardView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeyboardView.h; sourceTree = "<group>"; };
 		8EDDBEE419EC30B300AD2D49 /* KeyboardView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KeyboardView.m; sourceTree = "<group>"; };
-		8EE3691F19F3042F007AEA20 /* UIColor+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Additions.h"; path = "../../SDK_Utilities.repo/UI_Categories/UIColor+Additions.h"; sourceTree = "<group>"; };
-		8EE3692019F3042F007AEA20 /* UIColor+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Additions.m"; path = "../../SDK_Utilities.repo/UI_Categories/UIColor+Additions.m"; sourceTree = "<group>"; };
+		8EE3691F19F3042F007AEA20 /* UIColor+Additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIColor+Additions.h"; path = "../SDK_Utilities.repo/UI_Categories/UIColor+Additions.h"; sourceTree = SOURCE_ROOT; };
+		8EE3692019F3042F007AEA20 /* UIColor+Additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIColor+Additions.m"; path = "../SDK_Utilities.repo/UI_Categories/UIColor+Additions.m"; sourceTree = SOURCE_ROOT; };
 		8EE397C919F682CB006FA623 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		8EE5C54A1A02D02500BEFF00 /* ExtraKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExtraKeys.h; sourceTree = "<group>"; };
 		8EE5C54B1A02D02500BEFF00 /* ExtraKeys.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExtraKeys.m; sourceTree = "<group>"; };
@@ -100,13 +92,6 @@
 
 /* Begin PBXFrameworksBuildPhase section */
 		8E74956319DA65AD00B9EC9B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8E74957C19DA65AD00B9EC9B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -139,7 +124,6 @@
 			isa = PBXGroup;
 			children = (
 				8E74956619DA65AD00B9EC9B /* Keyboard2.app */,
-				8E74957F19DA65AD00B9EC9B /* Keyboard2Tests.xctest */,
 				8E74959319DA65EE00B9EC9B /* Garino-Keyboard.appex */,
 			);
 			name = Products;
@@ -234,24 +218,6 @@
 			productReference = 8E74956619DA65AD00B9EC9B /* Keyboard2.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8E74957E19DA65AD00B9EC9B /* Keyboard2Tests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 8E74958C19DA65AD00B9EC9B /* Build configuration list for PBXNativeTarget "Keyboard2Tests" */;
-			buildPhases = (
-				8E74957B19DA65AD00B9EC9B /* Sources */,
-				8E74957C19DA65AD00B9EC9B /* Frameworks */,
-				8E74957D19DA65AD00B9EC9B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				8E74958119DA65AD00B9EC9B /* PBXTargetDependency */,
-			);
-			name = Keyboard2Tests;
-			productName = Keyboard2Tests;
-			productReference = 8E74957F19DA65AD00B9EC9B /* Keyboard2Tests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 		8E74959219DA65EE00B9EC9B /* Garino-Keyboard */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8E74959F19DA65EE00B9EC9B /* Build configuration list for PBXNativeTarget "Garino-Keyboard" */;
@@ -287,10 +253,6 @@
 							};
 						};
 					};
-					8E74957E19DA65AD00B9EC9B = {
-						CreatedOnToolsVersion = 6.0.1;
-						TestTargetID = 8E74956519DA65AD00B9EC9B;
-					};
 					8E74959219DA65EE00B9EC9B = {
 						CreatedOnToolsVersion = 6.0.1;
 						DevelopmentTeam = G69KC2U64D;
@@ -316,7 +278,6 @@
 			projectRoot = "";
 			targets = (
 				8E74956519DA65AD00B9EC9B /* Keyboard2 */,
-				8E74957E19DA65AD00B9EC9B /* Keyboard2Tests */,
 				8E74959219DA65EE00B9EC9B /* Garino-Keyboard */,
 			);
 		};
@@ -328,13 +289,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E74957719DA65AD00B9EC9B /* Images.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		8E74957D19DA65AD00B9EC9B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -359,13 +313,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8E74957B19DA65AD00B9EC9B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		8E74958F19DA65EE00B9EC9B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -384,11 +331,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8E74958119DA65AD00B9EC9B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 8E74956519DA65AD00B9EC9B /* Keyboard2 */;
-			targetProxy = 8E74958019DA65AD00B9EC9B /* PBXContainerItemProxy */;
-		};
 		8E74959B19DA65EE00B9EC9B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 8E74959219DA65EE00B9EC9B /* Garino-Keyboard */;
@@ -506,40 +448,6 @@
 			};
 			name = Release;
 		};
-		8E74958D19DA65AD00B9EC9B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Keyboard2Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Keyboard2.app/Keyboard2";
-			};
-			name = Debug;
-		};
-		8E74958E19DA65AD00B9EC9B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = Keyboard2Tests/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Keyboard2.app/Keyboard2";
-			};
-			name = Release;
-		};
 		8E7495A019DA65EE00B9EC9B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -619,15 +527,6 @@
 			buildConfigurations = (
 				8E74958A19DA65AD00B9EC9B /* Debug */,
 				8E74958B19DA65AD00B9EC9B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		8E74958C19DA65AD00B9EC9B /* Build configuration list for PBXNativeTarget "Keyboard2Tests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				8E74958D19DA65AD00B9EC9B /* Debug */,
-				8E74958E19DA65AD00B9EC9B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

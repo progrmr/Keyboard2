@@ -115,7 +115,7 @@ const ShiftState nextNumberState[] = {
     NSArray* nKeys   = @[@"n", @"ñ", @"n", @"ń"];
     
     NSArray* row3 = @[
-                      [Key key:@"⬆︎" upper:@"⇪" number:@"#+=" symbol:@"123" width:1.25f tag:ShiftKey font:22],
+                      [Key key:@"⬆︎" upper:nil number:@"#+=" symbol:@"123" width:1.25f tag:ShiftKey font:22],
                       [Key key:qzxKeys number:@"/" symbol:@"\\" width:1.25f],
                       [Key key:@"c" number:@"," symbol:nil],
                       [Key key:@"v" number:@"?" symbol:nil],

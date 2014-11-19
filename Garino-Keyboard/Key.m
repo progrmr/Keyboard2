@@ -222,7 +222,14 @@
     
     // no shadow when key is pressed or shifted or locked
     self.layer.shadowOpacity = keyDown ? 0 : kShadowOpacity;
-    
+
+    // make the shift lock key different to clearly show it is locked
+    const BOOL shiftLocked = _shiftState == ShiftLock;
+
+    keyColor = shiftLocked ? kLockedKeyColor : kSpecialKeyColor;
+
+    [self setTitleColor:shiftLocked ? [UIColor whiteColor] : kKeyFontColor forState:UIControlStateNormal];
+
     [self setNeedsDisplay];
 }
 

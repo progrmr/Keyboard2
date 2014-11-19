@@ -38,6 +38,7 @@ enum {
 extern UIColor* kKeyboardBackgroundColor;
 extern UIColor* kKeyBackgroundColor;    // normal key background color
 extern UIColor* kSpecialKeyColor;       // special keys: Shift, Backspace, Return, etc.
+extern UIColor* kLockedKeyColor;        // Shift or Numbers key when locked down
 extern UIColor* kHighlightedKeyColor;   // highlighted key background color
 extern UIColor* kKeyFontColor;          // normal key font color
 extern UIColor* kHighlightedFontColor;  // highlighted key font color
